@@ -1,0 +1,21 @@
+# Déploiement Render.com (Blueprint)
+# - "plan: starter" (~7$/mois) est nécessaire pour le DISQUE PERSISTANT
+#   qui garde data.json même après redémarrage.
+# - Pour tester gratuitement : mets "plan: free" et SUPPRIME le bloc "disk"
+#   (⚠️ dans ce cas les données sont perdues quand le service se met en veille).
+services:
+  - type: web
+    name: carnet-japon-2026
+    runtime: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: TRIP_PASSWORD
+        sync: false          # tu le saisis dans le dashboard Render
+      - key: DATA_FILE
+        value: /data/data.json
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1

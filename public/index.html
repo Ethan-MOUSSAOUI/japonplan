@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japon 2026 — Carnet de voyage collaboratif</title>
+<style>
+  :root{
+    --washi:#f4efe6; --washi-2:#ece4d6;
+    --ink:#1c1a17; --ink-soft:#4a443c;
+    --momiji:#b1322b; --momiji-deep:#8a221d;
+    --indigo:#27384f; --indigo-soft:#3d5269;
+    --gold:#c08a2d; --moss:#5d6b4a;
+    --line:#d8cdba; --card:#fbf8f2;
+    --shadow:0 1px 2px rgba(28,26,23,.06),0 8px 24px rgba(28,26,23,.08);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;background:var(--washi);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",Georgia,"Times New Roman",serif;
+    -webkit-font-smoothing:antialiased;line-height:1.55;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.4;
+    background-image:radial-gradient(circle at 20% 30%,rgba(177,50,43,.04),transparent 40%),
+                     radial-gradient(circle at 80% 70%,rgba(39,56,79,.04),transparent 40%);
+  }
+  .wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 18px 80px}
+
+  /* ---- HERO ---- */
+  header.hero{padding:54px 0 30px;text-align:center;position:relative}
+  .stamp{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:74px;height:74px;border:2.5px solid var(--momiji);border-radius:50%;
+    color:var(--momiji);font-size:34px;margin-bottom:14px;
+    box-shadow:inset 0 0 0 3px var(--washi),0 0 0 1px var(--momiji);transform:rotate(-6deg);
+  }
+  .hero h1{font-size:clamp(32px,6vw,52px);margin:.1em 0 .15em;font-weight:700;letter-spacing:.01em}
+  .hero .jp{color:var(--momiji);font-size:.5em;display:block;letter-spacing:.3em;margin-bottom:6px}
+  .hero .dates{font-family:"Helvetica Neue",Arial,sans-serif;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
+  .hero .meta{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink-soft);margin-top:10px}
+
+  /* ---- TOOLBAR ---- */
+  .toolbar{
+    position:sticky;top:0;z-index:20;background:rgba(244,239,230,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    margin:0 -18px 26px;padding:10px 18px;
+    display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;
+  }
+  .filter{
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;letter-spacing:.04em;
+    border:1px solid var(--line);background:var(--card);color:var(--ink-soft);
+    padding:7px 13px;border-radius:999px;cursor:pointer;transition:.18s;white-space:nowrap;
+  }
+  .filter:hover{border-color:var(--momiji);color:var(--momiji)}
+  .filter.active{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+  .toolbar .sep{width:1px;height:22px;background:var(--line);margin:0 2px}
+  .progress-wrap{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);display:flex;align-items:center;gap:8px}
+  .progress-bar{width:90px;height:6px;border-radius:999px;background:var(--washi-2);overflow:hidden}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--moss),var(--gold));transition:width .4s}
+
+  /* présence en ligne */
+  .presence{display:flex;align-items:center;gap:5px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft)}
+  .presence .dotlive{width:8px;height:8px;border-radius:50%;background:#9aa;display:inline-block}
+  .presence.live .dotlive{background:var(--moss);box-shadow:0 0 0 3px rgba(93,107,74,.2)}
+  .avatars{display:flex}
+  .avatar{
+    width:24px;height:24px;border-radius:50%;background:var(--indigo);color:#fff;
+    display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+    border:2px solid var(--washi);margin-left:-6px;font-family:"Helvetica Neue",Arial,sans-serif;
+  }
+  .avatar:first-child{margin-left:0}
+
+  /* ---- CITY SECTION ---- */
+  .city{margin-bottom:14px}
+  .city-head{display:flex;align-items:baseline;gap:14px;padding:22px 0 4px;border-bottom:2px solid var(--ink);margin-bottom:22px}
+  .city-head .emoji{font-size:26px}
+  .city-head h2{font-size:26px;margin:0;font-weight:700}
+  .city-head .nights{
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+    color:#fff;background:var(--momiji);padding:3px 10px;border-radius:999px;margin-left:auto;align-self:center;
+  }
+  .city-head .span{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink-soft)}
+
+  .lodging{
+    display:flex;gap:12px;align-items:flex-start;
+    background:linear-gradient(180deg,rgba(39,56,79,.06),rgba(39,56,79,.02));
+    border:1px solid var(--line);border-left:3px solid var(--indigo);
+    border-radius:10px;padding:11px 14px;margin-bottom:20px;
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:13.5px;color:var(--ink-soft);
+  }
+  .lodging b{color:var(--indigo)}
+
+  /* ---- DAY CARD ---- */
+  .day{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;transition:.2s}
+  .day.done{opacity:.62}
+  .day-top{display:flex;align-items:stretch}
+  .day-num{flex:0 0 70px;background:var(--indigo);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 6px;text-align:center}
+  .day-num .j{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;letter-spacing:.12em;opacity:.7}
+  .day-num .n{font-size:30px;font-weight:700;line-height:1}
+  .day-num .date{font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;margin-top:5px;opacity:.85}
+  .day-body{flex:1;padding:15px 17px;min-width:0}
+  .day-body h3{margin:0 0 3px;font-size:18px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .day-body h3 .ttl{outline:none;border-radius:4px;padding:0 2px}
+  .day-body h3 .ttl:focus{background:rgba(192,138,45,.14)}
+  .tag{font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:999px;font-weight:600}
+  .tag.tokyo{background:#e8e2f0;color:#5a4a7a}
+  .tag.fuji{background:#dce8ef;color:#2b5a72}
+  .tag.kyoto{background:#f0e2e2;color:#8a3a3a}
+  .tag.osaka{background:#f0ead6;color:#7a6a2a}
+  .tag.hiro{background:#dce8e2;color:#2a6a4a}
+
+  .acts{list-style:none;padding:0;margin:10px 0 0}
+  .acts li{display:flex;align-items:flex-start;gap:9px;padding:6px 0;font-size:15px;color:var(--ink-soft);border-bottom:1px dashed rgba(216,205,186,.5)}
+  .acts li:last-child{border-bottom:none}
+  .acts li .dot{color:var(--momiji);flex:0 0 auto;margin-top:.05em}
+  .act-main{flex:1;min-width:0}
+  .acts li .txt{outline:none;border-radius:4px;padding:1px 3px;font-weight:600;color:var(--ink)}
+  .acts li .txt:focus{background:rgba(192,138,45,.12)}
+  .act-info{display:block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--ink-soft);opacity:.92;margin-top:2px;line-height:1.45}
+  .acts li .gmaps{
+    flex:0 0 auto;opacity:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;
+    color:var(--indigo);text-decoration:none;border:1px solid var(--line);padding:1px 7px;border-radius:999px;transition:.15s;white-space:nowrap;margin-top:1px;
+  }
+  .acts li:hover .gmaps{opacity:1}
+  .acts li .gmaps:hover{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+
+  .warn{display:flex;gap:8px;align-items:flex-start;background:rgba(177,50,43,.06);border-left:3px solid var(--momiji);border-radius:8px;padding:8px 11px;margin-top:11px;font-size:13.5px;color:var(--momiji-deep)}
+
+  /* bloc manger */
+  .eat-block{margin-top:13px;padding-top:12px;border-top:1px solid rgba(216,205,186,.72)}
+  .eat-label{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--moss);font-weight:700;margin-bottom:7px}
+  .eat-list{list-style:none;padding:0;margin:0}
+  .eat-item{display:flex;flex-direction:column;gap:1px;padding:5px 0;border-bottom:1px dashed rgba(216,205,186,.5)}
+  .eat-item:last-child{border-bottom:none}
+  .eat-name{font-family:"Helvetica Neue",Arial,sans-serif;font-size:14px;font-weight:700;color:var(--ink);text-decoration:none;display:inline-flex;align-items:center;gap:5px;width:fit-content}
+  .eat-name:hover{color:var(--momiji);text-decoration:underline}
+  .eat-name .pin{color:var(--moss);font-size:12px}
+  .eat-info{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--ink-soft);line-height:1.45}
+  .eatnote{
+    width:100%;margin-top:8px;border:1px solid var(--line);border-radius:8px;background:var(--washi);
+    padding:7px 11px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink);resize:vertical;min-height:38px;
+  }
+  .eatnote::placeholder{color:var(--ink-soft);opacity:.55}
+
+  /* niveau de journée */
+  .lvl{font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;letter-spacing:.04em;padding:2px 9px;border-radius:999px;font-weight:600;white-space:nowrap}
+  .lvl.phare{background:rgba(177,50,43,.12);color:var(--momiji-deep)}
+  .lvl.chill{background:rgba(93,107,74,.14);color:var(--moss)}
+  .day-num.is-phare{background:var(--momiji)}
+
+  /* ancre du jour */
+  .anchor{margin-top:11px;background:linear-gradient(180deg,rgba(192,138,45,.09),rgba(192,138,45,.03));border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:10px;padding:11px 13px}
+  .anchor-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .anchor-pin{font-size:16px;flex:0 0 auto}
+  .anchor-name{font-size:17px;font-weight:700;color:var(--ink);flex:1;min-width:120px;outline:none;border-radius:4px;padding:0 2px}
+  .anchor-links{display:flex;gap:6px;flex:0 0 auto}
+  .lk{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11.5px;text-decoration:none;border:1px solid var(--line);padding:3px 10px;border-radius:999px;transition:.15s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+  .lk.maps{color:var(--indigo)}
+  .lk.maps:hover{background:var(--indigo);color:#fff;border-color:var(--indigo)}
+  .lk.info{color:var(--moss)}
+  .lk.info:hover{background:var(--moss);color:#fff;border-color:var(--moss)}
+  .lk.guide{color:var(--momiji)}
+  .lk.guide:hover{background:var(--momiji);color:#fff;border-color:var(--momiji)}
+  .anchor-name:focus{background:rgba(192,138,45,.14)}
+  .anchor-info:empty::before{content:attr(data-ph);color:var(--ink-soft);opacity:.5}
+  .anchor-info{margin-top:7px;font-size:13.5px;color:var(--ink-soft);line-height:1.5;font-family:"Helvetica Neue",Arial,sans-serif;outline:none;border-radius:4px;padding:1px 2px}
+  .anchor-info:focus{background:rgba(192,138,45,.14)}
+  .around-label{margin-top:12px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);opacity:.7}
+
+  /* ---- PLANNING / TRAJET ---- */
+  .planning{margin-top:0;border:1px solid var(--line);border-radius:10px;background:rgba(39,56,79,.04);padding:0;overflow:hidden;max-height:0;opacity:0;transition:.25s;margin-bottom:0}
+  .planning.open{max-height:600px;opacity:1;padding:12px 14px;margin-top:11px}
+  .plan-switch{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:var(--card);margin-bottom:10px}
+  .plan-switch button{
+    font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;border:none;background:transparent;color:var(--ink-soft);
+    padding:6px 14px;cursor:pointer;transition:.15s;
+  }
+  .plan-switch button.active{background:var(--indigo);color:#fff}
+  .plan-route{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13.5px;color:var(--ink);line-height:1.55;display:flex;gap:8px;align-items:flex-start}
+  .plan-route .train{font-size:17px;flex:0 0 auto}
+  .plan-base{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--moss);margin-top:7px;font-style:italic}
+  .plan-note-label{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);opacity:.7;margin:11px 0 5px}
+  .plan-note{
+    width:100%;border:1px solid var(--line);border-radius:8px;background:var(--washi);
+    padding:8px 11px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink);resize:vertical;min-height:54px;
+  }
+  .plan-note::placeholder{color:var(--ink-soft);opacity:.55}
+
+  /* visuels */
+  .visuals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:13px;padding-top:13px;border-top:1px solid rgba(216,205,186,.72)}
+  .visual-card{position:relative;margin:0;min-height:132px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:var(--washi-2);box-shadow:0 6px 18px rgba(28,26,23,.08);isolation:isolate;transform:translateZ(0)}
+  .visual-card img{width:100%;height:132px;object-fit:cover;display:block;filter:saturate(.98) contrast(.98);transform:scale(1.01);transition:transform .35s,filter .35s,opacity .4s}
+  .visual-card img.vimg{opacity:0;background:var(--washi-2)}
+  .visual-card img.vimg.loaded,.visual-card img.vimg[src^="data:"]{opacity:1}
+  .visual-card::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(135deg,var(--washi-2),var(--line))}
+  .visual-card::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(28,26,23,.04) 0%,rgba(28,26,23,.12) 42%,rgba(28,26,23,.72) 100%);pointer-events:none}
+  .visual-card:hover img{transform:scale(1.06);filter:saturate(1.08) contrast(1.02)}
+  .visual-cap{position:absolute;left:10px;right:10px;bottom:9px;z-index:2;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+  .visual-cap b{display:block;font-size:13.5px;line-height:1.2;letter-spacing:.01em}
+  .visual-cap span{display:block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;opacity:.86;margin-top:3px;line-height:1.15}
+  .visual-emoji{position:absolute;top:8px;left:8px;z-index:2;width:31px;height:31px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(251,248,242,.9);border:1px solid rgba(255,255,255,.7);box-shadow:0 2px 10px rgba(0,0,0,.16);font-size:17px}
+  .visual-source{margin-top:8px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;color:var(--ink-soft);opacity:.8}
+
+  /* photos */
+  .photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px;padding-top:13px;border-top:1px solid var(--line)}
+  .photo{position:relative;width:84px;height:84px;border-radius:9px;overflow:hidden;background:var(--washi-2);border:1px solid var(--line)}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo .rm{position:absolute;top:3px;right:3px;width:18px;height:18px;border-radius:50%;background:rgba(28,26,23,.7);color:#fff;border:none;cursor:pointer;font-size:11px;line-height:18px;text-align:center;padding:0}
+  .addphoto{width:84px;height:84px;border-radius:9px;border:1.5px dashed var(--line);background:transparent;cursor:pointer;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10px;transition:.15s}
+  .addphoto:hover{border-color:var(--momiji);color:var(--momiji)}
+  .addphoto .plus{font-size:20px;line-height:1}
+  .addphoto.drag{border-color:var(--moss);background:rgba(93,107,74,.08);color:var(--moss)}
+
+  /* footer controls */
+  .day-foot{display:flex;align-items:center;gap:10px;padding:9px 17px;background:rgba(216,205,186,.22);border-top:1px solid var(--line);font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;flex-wrap:wrap}
+  .check{display:inline-flex;align-items:center;gap:7px;cursor:pointer;color:var(--ink-soft);user-select:none}
+  .check input{display:none}
+  .check .box{width:18px;height:18px;border:1.6px solid var(--moss);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:12px;transition:.15s}
+  .check input:checked + .box{background:var(--moss)}
+  .foot-btn{color:var(--indigo);background:none;border:none;cursor:pointer;font-family:inherit;font-size:12.5px;display:inline-flex;align-items:center;gap:5px}
+  .foot-btn:hover{text-decoration:underline}
+  .foot-spacer{margin-left:auto}
+
+  /* versions */
+  .versions{display:inline-flex;align-items:center;gap:6px;color:var(--ink-soft)}
+  .ver-select{font-family:inherit;font-size:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:7px;padding:3px 6px;max-width:160px}
+  .ver-mini{width:24px;height:24px;border:1px solid var(--line);background:var(--card);border-radius:7px;cursor:pointer;color:var(--ink-soft);font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .ver-mini:hover{border-color:var(--momiji);color:var(--momiji)}
+
+  .note{width:100%;border:1px solid var(--line);border-radius:8px;background:var(--washi);margin-top:0;padding:0 13px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13.5px;color:var(--ink);resize:vertical;max-height:0;opacity:0;transition:.2s;overflow:hidden}
+  .note.open{max-height:160px;min-height:60px;opacity:1;padding:10px 13px;margin-top:2px}
+
+  /* ---- MODE ÉDITION ---- */
+  .day.editing{outline:2px dashed var(--gold);outline-offset:-3px}
+  .foot-btn.editing-on{color:var(--momiji);font-weight:700}
+  .visual-card.big{grid-column:1/-1}
+  .visual-card.big img{height:300px}
+  .vctrl{position:absolute;top:6px;right:6px;z-index:3;display:flex;gap:4px}
+  .vctrl button{width:26px;height:26px;border-radius:7px;border:none;background:rgba(28,26,23,.74);color:#fff;cursor:pointer;font-size:13px;line-height:1;display:flex;align-items:center;justify-content:center}
+  .vctrl button:hover{background:var(--momiji)}
+  .visual-add{min-height:132px;border-radius:12px;border:1.5px dashed var(--line);background:transparent;cursor:pointer;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;transition:.15s}
+  .visual-add:hover{border-color:var(--momiji);color:var(--momiji)}
+  .visual-add .plus{font-size:24px;line-height:1}
+  .photo.big{width:100%;height:auto}
+  .photo.big img{width:100%;height:auto;max-height:440px;object-fit:cover}
+  .photo .big-toggle{position:absolute;bottom:3px;left:3px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10px;border:none;border-radius:6px;background:rgba(28,26,23,.7);color:#fff;cursor:pointer;padding:2px 6px}
+  .photo .big-toggle:hover{background:var(--moss)}
+  .eat-edit{display:grid;grid-template-columns:1fr 1fr;gap:6px;align-items:start;border:1px solid var(--line);border-radius:9px;padding:9px;margin-bottom:8px;background:var(--washi)}
+  .eat-edit input,.eat-edit textarea{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;border:1px solid var(--line);border-radius:7px;padding:6px 8px;background:#fff;width:100%}
+  .eat-edit input:focus,.eat-edit textarea:focus{outline:none;border-color:var(--gold)}
+  .eat-edit .ee-info{grid-column:1/-1;resize:vertical;min-height:38px}
+  .eat-edit .ee-del{grid-column:1/-1;justify-self:start;border:none;background:none;color:var(--momiji);cursor:pointer;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;padding:0}
+  .eat-edit .ee-del:hover{text-decoration:underline}
+  .eat-add{border:1.5px dashed var(--line);background:transparent;color:var(--moss);cursor:pointer;border-radius:8px;padding:7px 12px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;margin-bottom:8px}
+  .eat-add:hover{border-color:var(--moss)}
+  .eat-edit .aa-del{grid-column:1/-1;justify-self:start;border:none;background:none;color:var(--momiji);cursor:pointer;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;padding:0}
+  .eat-edit .aa-del:hover{text-decoration:underline}
+  .around-add{border:1.5px dashed var(--line);background:transparent;color:var(--momiji);cursor:pointer;border-radius:8px;padding:7px 12px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px}
+  .around-add:hover{border-color:var(--momiji)}
+
+  /* ---- VUE PLANNING DU JOUR ---- */
+  .day.planning-mode{outline:2px solid var(--indigo);outline-offset:-2px}
+  .plan-block{border:1px solid var(--line);border-radius:10px;background:rgba(39,56,79,.05);padding:11px 13px;margin:6px 0 4px}
+  .sched{width:100%;border-collapse:collapse;margin:12px 0 8px}
+  .sched th{text-align:left;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);padding:4px 6px;border-bottom:2px solid var(--line)}
+  .sched td{padding:2px 4px;border-bottom:1px solid rgba(216,205,186,.5);vertical-align:middle}
+  .sched input{width:100%;border:1px solid transparent;background:transparent;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13.5px;color:var(--ink);border-radius:6px;padding:6px 7px}
+  .sched input:focus{border-color:var(--gold);background:#fff;outline:none}
+  .sched td.c-time{width:88px}
+  .sched td.c-time input{font-weight:700;color:var(--indigo)}
+  .sched td.c-del{width:30px;text-align:center}
+  .s-del{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:14px;opacity:.45;line-height:1}
+  .s-del:hover{opacity:1;color:var(--momiji)}
+  .sched-add{border:1.5px dashed var(--line);background:transparent;color:var(--indigo);cursor:pointer;border-radius:8px;padding:7px 12px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;margin-bottom:10px}
+  .sched-add:hover{border-color:var(--indigo)}
+
+  /* prep */
+  .prep{background:linear-gradient(180deg,rgba(192,138,45,.08),rgba(192,138,45,.02));border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:30px}
+  .prep h2{margin:0 0 4px;font-size:21px;display:flex;align-items:center;gap:10px}
+  .prep .sub{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--ink-soft);margin-bottom:14px}
+  .prep ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px 22px}
+  .prep ul li{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:var(--ink-soft)}
+  .prep ul li .dot{color:var(--gold);margin-top:.05em}
+  .prep b{color:var(--ink)}
+
+  footer{text-align:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--line);font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft)}
+  .save-pill{position:fixed;bottom:18px;right:18px;z-index:30;background:var(--ink);color:var(--washi);font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;padding:8px 14px;border-radius:999px;box-shadow:var(--shadow);opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none}
+  .save-pill.show{opacity:1;transform:translateY(0)}
+  .offline-banner{display:none;background:rgba(192,138,45,.14);border:1px solid var(--gold);color:var(--momiji-deep);border-radius:10px;padding:9px 14px;margin-bottom:18px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;text-align:center}
+  .offline-banner.show{display:block}
+
+  /* ---- LOGIN ---- */
+  .login-overlay{position:fixed;inset:0;z-index:100;background:linear-gradient(160deg,var(--indigo),#1a2636);display:flex;align-items:center;justify-content:center;padding:20px}
+  .login-overlay.hidden{display:none}
+  .login-card{background:var(--card);border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.4);padding:34px 30px;max-width:380px;width:100%;text-align:center}
+  .login-card .stamp2{width:62px;height:62px;border:2.5px solid var(--momiji);border-radius:50%;color:var(--momiji);font-size:28px;display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;transform:rotate(-6deg)}
+  .login-card h2{margin:0 0 4px;font-size:24px}
+  .login-card p{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink-soft);margin:0 0 20px}
+  .login-card input{width:100%;font-family:"Helvetica Neue",Arial,sans-serif;font-size:15px;padding:11px 13px;border:1px solid var(--line);border-radius:10px;margin-bottom:11px;background:var(--washi)}
+  .login-card input:focus{outline:none;border-color:var(--gold)}
+  .login-card button.go{width:100%;font-family:"Helvetica Neue",Arial,sans-serif;font-size:15px;font-weight:700;padding:12px;border:none;border-radius:10px;background:var(--momiji);color:#fff;cursor:pointer;transition:.15s}
+  .login-card button.go:hover{background:var(--momiji-deep)}
+  .login-err{color:var(--momiji);font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;min-height:18px;margin-bottom:6px}
+  .login-offline{margin-top:14px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft)}
+  .login-offline a{color:var(--indigo);cursor:pointer;text-decoration:underline}
+  .login-status{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);margin-top:10px;min-height:16px}
+
+  @media(max-width:620px){
+    .prep ul{grid-template-columns:1fr}
+    .day-num{flex-basis:58px}
+    .day-num .n{font-size:24px}
+    .acts li .gmaps{opacity:1}
+    .city-head{flex-wrap:wrap}
+    .city-head .nights{margin-left:0}
+    .eat-edit{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="stamp2">楓</div>
+    <h2>Carnet Japon 2026</h2>
+    <p>Connecte-toi pour éditer le voyage à plusieurs, en temps réel.</p>
+    <form id="loginForm">
+      <input id="loginName" type="text" placeholder="Ton prénom / pseudo" autocomplete="nickname" required>
+      <input id="loginPass" type="password" placeholder="Mot de passe du voyage" autocomplete="current-password" required>
+      <div class="login-err" id="loginErr"></div>
+      <button class="go" type="submit">Rejoindre le carnet</button>
+    </form>
+    <div class="login-status" id="loginStatus">Connexion au serveur…</div>
+    <div class="login-offline" id="loginOffline" style="display:none">
+      Pas de serveur détecté — <a id="goOffline">continuer hors-ligne sur cet appareil</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="stamp">楓</div>
+    <h1><span class="jp">ニッポン</span>Japon 2026</h1>
+    <div class="dates">25 octobre — 15 novembre · 21 nuits</div>
+    <div class="meta">5 voyageurs · automne · momiji 🍁</div>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <button class="filter active" data-city="all">Tout</button>
+    <button class="filter" data-city="tokyo">Tokyo</button>
+    <button class="filter" data-city="fuji">Fuji</button>
+    <button class="filter" data-city="kyoto">Kyoto</button>
+    <button class="filter" data-city="osaka">Osaka</button>
+    <button class="filter" data-city="hiro">Hiroshima</button>
+    <span class="sep"></span>
+    <div class="progress-wrap">
+      <span id="progressTxt">0 / 22 jours</span>
+      <span class="progress-bar"><span class="progress-fill" id="progressFill"></span></span>
+    </div>
+    <span class="sep"></span>
+    <div class="presence" id="presence" title="Personnes connectées">
+      <span class="dotlive"></span><span id="presenceTxt">hors-ligne</span>
+      <span class="avatars" id="avatars"></span>
+    </div>
+  </div>
+
+  <div class="offline-banner" id="offlineBanner">⚠️ Mode hors-ligne — tes modifications restent sur cet appareil et ne sont pas partagées.</div>
+
+  <section class="prep" data-city="all">
+    <h2>🎒 Avant de partir</h2>
+    <div class="sub">Les essentiels à régler en avance — clique pour cocher au fur et à mesure</div>
+    <ul id="prepList"></ul>
+  </section>
+
+  <div id="timeline"></div>
+
+  <footer>
+    Carnet collaboratif temps réel — connecte-toi, édite, tout le monde voit les changements en direct.<br>
+    Chaque jour : explications sur chaque lieu · restos cliquables → Google Maps · planning trajet Shinjuku/Ueno · versions multiples.
+  </footer>
+</div>
+
+<div class="save-pill" id="savePill">✓ sauvegardé</div>
+
+<!-- Socket.IO (servi par le serveur Node). Absent = mode hors-ligne. -->
+<script src="/socket.io/socket.io.js"></script>
+<script>
+/* ============ DONNÉES DU VOYAGE ============ */
+const PREP = [
+  "<b>Traduction permis JAF</b> (service tiers FR, plusieurs semaines avant) + vérifier que l'agence accepte un permis &lt; 1 an",
+  "<b>eSIM</b> Ubigi / Airalo — installer avant, activer à l'atterrissage",
+  "<b>Suica</b> virtuelle dans Apple Wallet pour métro / konbini",
+  "<b>Réserver les billets datés</b> : teamLab, Shibuya Sky, Fuji-Q",
+  "<b>Réserver les logements</b> vite (haute saison momiji)",
+  "<b>Voiture de location</b> Tokyo → Fuji (récup le 1er nov)",
+  "<b>Envoi valises Yamato</b> Tokyo → Kyoto avant le roadtrip Fuji",
+  "<b>Cash</b> : retraits 7-Eleven (7Bank) / Post Office"
+];
+
+/* around -> [{t:titre, info:explication}] ; eat -> [{name, info, maps}] */
+const CITIES = [
+  {
+    id:"tokyo", emoji:"🌆", name:"Tokyo", span:"25 oct → 1 nov", nights:"7 nuits",
+    lodging:"<b>Logement :</b> Shinjuku — MIMARU Shinjuku West ou Citadines (appart 5 pers, cuisine, service valises).",
+    days:[
+      {j:"J1",n:"25",date:"Dim 25/10",level:"chill",title:"Arrivée — on se pose",
+       anchor:{name:"Se poser à Shinjuku",info:"Rien à prouver aujourd'hui. Konbini, première nuit, marche selon la fatigue.",wiki:"Shinjuku"},
+       around:[
+         {t:"Premier konbini (essayer un peu de tout)",info:"Le rituel d'arrivée : onigiri, sandwichs moelleux, boissons. Ouvert 24h, à chaque coin de rue."},
+         {t:"Courses rapides pour l'appart",info:"Eau, petit-déj, snacks pour l'appartement — supérette ou konbini en bas."},
+         {t:"Marche de nuit si encore d'attaque",info:"Boucle tranquille dans Shinjuku pour s'imprégner des néons, sans programme."}
+       ],
+       eat:[
+         {name:"Konbini (Lawson / 7-Eleven / FamilyMart)",info:"Plats chauds, onigiri, sandwichs — parfait le 1er soir si vous êtes cuits. Ouvert 24h.",maps:"konbini Shinjuku"},
+         {name:"Ramen halal du quartier",info:"Plusieurs adresses halal autour de Shinjuku — repli facile en cas de fatigue.",maps:"halal ramen Shinjuku"}
+       ]},
+
+      {j:"J2",n:"26",date:"Lun 26/10",level:"phare",title:"Shibuya — dans le bain direct",
+       anchor:{name:"Shibuya",info:"La claque visuelle pour démarrer : le Crossing, l'énergie, les écrans géants.",wiki:"Shibuya",maps:"Shibuya Crossing Tokyo"},
+       around:[
+         {t:"Shibuya Parco (Nintendo / Pokémon / Jump Store)",info:"Centre commercial avec Nintendo Tokyo, le Pokémon Center et la Jump Store (Shonen Jump) au 6e étage."},
+         {t:"Harajuku + Takeshita-dori (1 station)",info:"Rue piétonne de la mode kawaii : crêpes, friperies, boutiques streetwear, à une station de Shibuya."},
+         {t:"Pousser sur Shinjuku le soir si pas crevés",info:"Retour vers Shinjuku pour les néons du soir si l'énergie est là."}
+       ],
+       eat:[
+         {name:"Wagyu Halal 5W-Tokyo 1962",info:"LE gros wagyu certifié halal vers Harajuku/Shibuya — bœuf grillé premium, à réserver.",maps:"5W Tokyo 1962 Wagyu Halal Harajuku"}
+       ]},
+
+      {j:"J3",n:"27",date:"Mar 27/10",level:"phare",title:"Akihabara + footsal",
+       anchor:{name:"Akihabara",info:"Le quartier gaming/otaku : arcades, retrogaming, figurines, électronique.",wiki:"Akihabara",maps:"Akihabara Electric Town Tokyo"},
+       around:[
+         {t:"Kanda-myōjin (sanctuaire tech/otaku)",info:"Sanctuaire shintō qui bénit les appareils électroniques — amulettes geek, à 10 min d'Akihabara."},
+         {t:"Boutiques figurines & rétro",info:"Mandarake, Super Potato, etc. : figurines, jeux rétro et mangas d'occasion sur plusieurs étages."},
+         {t:"⚽ Footsal le soir (réserver le terrain)",info:"Match entre vous — réserver le créneau à l'avance, les terrains partent vite."}
+       ],
+       eat:[
+         {name:"Street food d'Akihabara",info:"Stands et petits comptoirs entre les boutiques — grignotage rapide entre deux arcades.",maps:"Akihabara street food"},
+         {name:"Halal Wagyu Yakiniku Panga",info:"Yakiniku (viande grillée à table) certifié halal — le bon plan viande du quartier.",maps:"Halal Wagyu Yakiniku Panga Tokyo"}
+       ]},
+
+      {j:"J4",n:"28",date:"Mer 28/10",level:"chill",title:"Asakusa matin + Yotsugi vélo",
+       anchor:{name:"Sensō-ji / Asakusa",info:"Le grand temple le matin (avant la foule), la rue Nakamise, ambiance traditionnelle.",wiki:"Sensō-ji",maps:"Senso-ji Temple Asakusa"},
+       around:[
+         {t:"Déjeuner dans Asakusa",info:"Pause repas dans le quartier traditionnel après la visite du temple."},
+         {t:"Yotsugi à vélo — 9 statues Captain Tsubasa",info:"Balade à vélo dans Yotsugi/Tateishi pour trouver les 9 statues d'Olive et Tom — belle lumière en fin d'après-midi."},
+         {t:"Tokyo Skytree au passage",info:"La plus haute tour du Japon (634 m) — montée payante ou simple photo depuis le pied."},
+         {t:"Don Quijote Asakusa (repérage)",info:"Magasin discount géant (snacks, cosmétiques, gadgets) — repérage pour les cadeaux."}
+       ],
+       eat:[
+         {name:"Gyumon Halal Ramen Asakusa",info:"Ramen halal réputé d'Asakusa (note ~4,9) — la valeur sûre du midi.",maps:"Gyumon Halal Ramen Asakusa"}
+       ]},
+
+      {j:"J5",n:"29",date:"Jeu 29/10",level:"chill",title:"Shinjuku + vue gratuite + nuit",
+       anchor:{name:"Tokyo Metropolitan Building",info:"Observatoire GRATUIT au 45e (202 m), vue 360° sur Tokyo et le Fuji. Sud ouvert jusqu'à 21h30 pour la vue de nuit. Ouvert le jeudi.",wiki:"Tokyo_Metropolitan_Government_Building",maps:"Tokyo Metropolitan Government Building observation deck"},
+       around:[
+         {t:"Escalier Your Name (Suga Shrine, Yotsuya)",info:"Les marches du sanctuaire Suga, décor de la scène finale du film 'Your Name' — spot photo."},
+         {t:"Kabukichō, Omoide Yokocho",info:"Kabukichō : quartier des néons et de la nuit. Omoide Yokocho : ruelles d'échoppes rétro et brochettes."},
+         {t:"Soir : Golden Gai, néons",info:"Dédale de minuscules bars sur 6 ruelles — ambiance Tokyo d'antan."}
+       ],
+       eat:[
+         {name:"Halal Wagyu Ramen Shinjuku-Tei",info:"Ramen au wagyu halal (note ~4,9) en plein Shinjuku.",maps:"Halal Wagyu Ramen Shinjuku-Tei"},
+         {name:"CoCo Ichibanya (curry)",info:"Chaîne de curry japonais — vérifier le menu/option adaptée.",maps:"CoCo Ichibanya Shinjuku"}
+       ]},
+
+      {j:"J6",n:"30",date:"Ven 30/10",level:"phare",title:"Kamakura + Enoshima",
+       anchor:{name:"Kamakura",info:"Journée hors Tokyo : le Grand Bouddha (Daibutsu), temples, la ligne Enoden au bord de mer.",wiki:"Kōtoku-in",maps:"Kotoku-in Great Buddha Kamakura"},
+       around:[
+         {t:"Ligne Enoden (train côtier)",info:"Petit train rétro entre Kamakura et Enoshima, longe la côte (vue passage à niveau façon Slam Dunk)."},
+         {t:"Enoshima : île, sanctuaire, vue Fuji",info:"Île reliée par un pont : sanctuaire, jardins, phare, et vue sur le Fuji si le ciel est dégagé."},
+         {t:"Coucher de soleil sur Enoshima",info:"Le couchant sur la baie depuis l'île — beau point final de journée."}
+       ],
+       eat:[
+         {name:"Options sur place (Kamakura / Enoshima)",info:"Choix limité côté halal — repérer une adresse à l'avance ou prévoir konbini.",maps:"restaurant Kamakura"},
+         {name:"Ramen au retour à Tokyo",info:"Repli sûr le soir en rentrant sur Tokyo.",maps:"halal ramen Tokyo"}
+       ]},
+
+      {j:"J7",n:"31",date:"Sam 31/10",level:"phare",title:"teamLab + Halloween",
+       anchor:{name:"teamLab Planets",info:"Musée numérique immersif à Toyosu. Billet daté à réserver à l'avance — créneau horaire imposé.",wiki:"TeamLab",maps:"teamLab Planets Tokyo Toyosu"},
+       around:[
+         {t:"Flea market ou Gōtoku-ji (temple aux chats)",info:"Marché aux puces, ou le temple Gōtoku-ji et ses centaines de maneki-neko (chats porte-bonheur)."},
+         {t:"Soir Halloween : bar / izakaya",info:"Soirée Halloween à Tokyo — Shibuya très surveillée ce soir-là, privilégier un izakaya ou un bar."}
+       ],
+       warn:"Grosse journée (teamLab + Halloween le même jour) — réserver teamLab tôt pour garder la soirée libre.",
+       eat:[
+         {name:"Toribushi (Halal)",info:"Restaurant halal japonais — bonne option avant teamLab/Halloween.",maps:"Toribushi Halal Tokyo"},
+         {name:"Ayam-ya Halal Ramen",info:"Ramen au poulet halal, chaîne fiable à Tokyo.",maps:"Ayam-ya Halal Ramen Tokyo"}
+       ]}
+    ]
+  },
+  {
+    id:"fuji", emoji:"🗻", name:"Mont Fuji / Kawaguchiko", span:"1 → 3 nov", nights:"2 nuits",
+    lodging:"<b>Logement :</b> ryokan avec onsen côté lac Kawaguchiko — c'est ici qu'on met le budget logement.",
+    days:[
+      {j:"J8",n:"1",date:"Dim 1/11",level:"chill",title:"Route + ryokan + onsen",
+       anchor:{name:"Lac Kawaguchi",info:"Récup voiture le matin, route (~2h), installation au ryokan, premier onsen et coucher de soleil sur le Fuji.",wiki:"Lake_Kawaguchi",maps:"Lake Kawaguchi Fuji"},
+       around:[
+         {t:"Récupération voiture à Tokyo (~13h)",info:"Prise en main de la voiture de location, puis route vers le lac par l'autoroute Chūō (~2h)."},
+         {t:"Installation ryokan / onsen",info:"Arrivée à l'auberge traditionnelle, premier bain chaud (onsen)."},
+         {t:"Premier coucher de soleil sur le Fuji",info:"Si le ciel est clair, le Fuji rosit au couchant depuis le lac."}
+       ],
+       warn:"Valises déjà envoyées à Kyoto par Yamato — ne garder que le nécessaire 2 nuits.",
+       eat:[
+         {name:"Hōtō (nouilles locales)",info:"Spécialité de la région du Fuji : grosses nouilles plates en soupe miso et légumes. Vérifier l'option halal/sans porc.",maps:"Hoto noodles Kawaguchiko"}
+       ]},
+
+      {j:"J9",n:"2",date:"Lun 2/11",level:"phare",title:"Fuji-Q Highland",
+       anchor:{name:"Fuji-Q Highland",info:"Le parc d'attractions au pied du Fuji. Calé le 2 (hors férié) = beaucoup moins de monde que le 3.",wiki:"Fuji-Q_Highland",maps:"Fuji-Q Highland"},
+       around:[
+         {t:"Montagnes russes (records du monde)",info:"Fuji-Q aligne plusieurs coasters records : Fujiyama, Eejanaika, Takabisha."},
+         {t:"Naruto × Boruto area",info:"Zone immersive sur l'univers Naruto/Boruto."},
+         {t:"Attractions anime",info:"Plusieurs attractions à thème anime/manga dans le parc."}
+       ],
+       eat:[
+         {name:"Restauration du parc Fuji-Q",info:"Stands et restos dans le parc — options halal limitées, prévoir.",maps:"Fuji-Q Highland restaurants"},
+         {name:"Retour au ryokan",info:"Dîner au ryokan si la pension est incluse.",maps:"Kawaguchiko ryokan"}
+       ]},
+
+      {j:"J10",n:"3",date:"Mar 3/11",level:"phare",title:"Chureito matin → Shinkansen Kyoto",
+       anchor:{name:"Chūreitō Pagoda",info:"La vue carte postale pagode + Fuji. Tôt le matin avant de partir. Détour assumé avant la restitution voiture.",wiki:"Arakurayama_Sengen_Park",maps:"Chureito Pagoda Arakurayama Sengen Park"},
+       around:[
+         {t:"Tour rapide du lac si le temps le permet",info:"Boucle du lac Kawaguchi en voiture, spots photo Fuji + momiji."},
+         {t:"Restitution voiture (Mishima / Shin-Fuji)",info:"Rendre la voiture près d'une gare Shinkansen (Mishima ou Shin-Fuji)."},
+         {t:"Shinkansen → Kyoto en début d'aprem",info:"Train à grande vitesse vers Kyoto (~2h via Tokyo selon la gare de départ)."}
+       ],
+       warn:"3 nov = jour férié (Culture Day). Récupérer les valises à l'hôtel Kyoto en arrivant.",
+       eat:[
+         {name:"Bento de gare (ekiben)",info:"Le repas du Shinkansen : boîte-repas achetée en gare. Choisir un ekiben sans porc.",maps:"ekiben Mishima station"}
+       ]}
+    ]
+  },
+  {
+    id:"kyoto", emoji:"🍁", name:"Kyoto", span:"3 → 6 nov", nights:"3 nuits",
+    lodging:"<b>Logement :</b> près de la gare de Kyoto (arrivée Shinkansen + départ Osaka faciles) ou quartier Gion pour l'ambiance.",
+    days:[
+      {j:"J11",n:"4",date:"Mer 4/11",level:"phare",title:"Fushimi Inari + Higashiyama",
+       anchor:{name:"Fushimi Inari-taisha",info:"Les milliers de torii rouges. Y aller AVANT 8h pour les avoir presque pour soi — après c'est noir de monde.",wiki:"Fushimi_Inari-taisha",maps:"Fushimi Inari Taisha Kyoto"},
+       around:[
+         {t:"Kiyomizu-dera + Sannenzaka/Ninenzaka",info:"Temple sur pilotis avec vue sur Kyoto + montées pavées traditionnelles bordées d'échoppes."},
+         {t:"Gion : maisons de geisha",info:"Le quartier des geishas : maisons de thé en bois, ruelle Hanami-kōji."},
+         {t:"Cafés, se perdre dans Higashiyama",info:"Flâner dans le vieux Kyoto, pauses thé/café entre les temples."}
+       ],
+       eat:[
+         {name:"Halal Ramen Honolu (Gion)",info:"Ramen halal apprécié, proche de Gion.",maps:"Honolu Halal Ramen Gion Kyoto"},
+         {name:"Ayam-ya Karasuma",info:"Branche Kyoto du ramen halal Ayam-ya.",maps:"Ayam-ya Karasuma Kyoto"}
+       ]},
+
+      {j:"J12",n:"5",date:"Jeu 5/11",level:"chill",title:"Arashiyama",
+       anchor:{name:"Arashiyama",info:"La forêt de bambous (très tôt pour éviter la foule), puis le quartier au bord de la rivière.",wiki:"Arashiyama",maps:"Arashiyama Bamboo Grove Kyoto"},
+       around:[
+         {t:"Monkey Park Iwatayama",info:"Montée de 20 min jusqu'à un sommet peuplé de macaques en liberté + panorama sur Kyoto."},
+         {t:"Pont Togetsukyō, balades momiji",info:"Pont emblématique sur la rivière Katsura, superbe avec les érables d'automne."},
+         {t:"Cafés et ruelles",info:"Petites adresses et boutiques du quartier d'Arashiyama."}
+       ],
+       eat:[
+         {name:"Yoshiya Arashiyama",info:"Washoku (cuisine japonaise) halal avec salle de prière, juste à côté du pont Togetsukyō.",maps:"Yoshiya Arashiyama halal"}
+       ]},
+
+      {j:"J13",n:"6",date:"Ven 6/11",level:"chill",title:"Kyoto libre → Osaka",
+       anchor:{name:"Kinkaku-ji",info:"Le Pavillon d'Or pour finir Kyoto, puis transfert tranquille vers Osaka (~15-40 min en train).",wiki:"Kinkaku-ji",maps:"Kinkaku-ji Golden Pavilion Kyoto"},
+       around:[
+         {t:"Nishiki Market (marché couvert)",info:"Ruelle couverte de ~400 m, le 'ventre de Kyoto' : étals, snacks, ustensiles."},
+         {t:"Cafés, ce qui a manqué",info:"Rattraper un spot manqué, pause café avant de filer sur Osaka."},
+         {t:"Aprem : transfert Kyoto → Osaka",info:"Train vers Osaka (~15 min en express, ~40-60 min selon la ligne)."}
+       ],
+       eat:[
+         {name:"Nishiki Market (street food)",info:"Le marché couvert de Kyoto — brochettes, snacks, douceurs. Vérifier les ingrédients au stand.",maps:"Nishiki Market Kyoto"}
+       ]}
+    ]
+  },
+  {
+    id:"osaka", emoji:"🌃", name:"Osaka", span:"6 → 9 nov", nights:"4 nuits",
+    lodging:"<b>Logement :</b> Namba / Dotonbori — cœur de la street food, arcades, nightlife, bien placé pour les excursions (Nara, Kyoto).",
+    days:[
+      {j:"J14",n:"7",date:"Sam 7/11",level:"phare",title:"Dotonbori + Osaka ville",
+       anchor:{name:"Dōtonbori",info:"Le cœur néon d'Osaka : le Glico, le canal, la street food à gogo, l'ambiance fun de la ville.",wiki:"Dōtonbori",maps:"Dotonbori Osaka"},
+       around:[
+         {t:"Château d'Osaka + parc (le matin)",info:"Château reconstruit entouré d'un grand parc — belles vues, douves, momiji en automne."},
+         {t:"Amerikamura + BB Amemura (friperies)",info:"Quartier branché 'Amerika-mura' : streetwear, friperies, boutiques vintage."},
+         {t:"Soir : arcades, karaoké",info:"Salles d'arcade et box de karaoké autour de Namba/Dōtonbori."}
+       ],
+       eat:[
+         {name:"Wagyu Halal Namba-Tei",info:"LE gros resto halal d'Osaka (note ~4,8) à Dōtonbori/Namba — wagyu grillé.",maps:"Wagyu Halal Namba-Tei Osaka"}
+       ]},
+
+      {j:"J15",n:"8",date:"Dim 8/11",level:"phare",title:"Nara — daims & grand temple",
+       anchor:{name:"Tōdai-ji",info:"Le grand temple de Nara : le Daibutsu-den (l'un des plus grands bâtiments en bois au monde) abrite un Bouddha de bronze de 15 m. Daims en liberté tout autour.",wiki:"Tōdai-ji",maps:"Todai-ji Nara"},
+       around:[
+         {t:"Parc de Nara : daims en liberté",info:"Plus de 1000 cerfs sika se promènent librement ; biscuits 'shika-senbei' en vente, ils s'inclinent pour en avoir."},
+         {t:"Kasuga-taisha (lanternes)",info:"Sanctuaire célèbre pour ses milliers de lanternes de pierre et de bronze, au cœur de la forêt."},
+         {t:"Kōfuku-ji (pagode à 5 étages)",info:"Grand temple avec une pagode emblématique, à 5 min à pied de la gare Kintetsu-Nara."},
+         {t:"Naramachi (vieille ville)",info:"Ruelles marchandes traditionnelles : machiya, artisanat, cafés."}
+       ],
+       eat:[
+         {name:"Options halal limitées à Nara",info:"Peu d'adresses halal sur place — viser un resto veggie/poisson, ou manger avant/après à Osaka. Konbini en secours.",maps:"halal restaurant Nara"},
+         {name:"Mochi de Nakatanidō",info:"Spectacle du pilage du mochi (yomogi mochi) près de Sanjō-dori — snack sucré local très réputé.",maps:"Nakatanidou Nara"}
+       ]},
+
+      {j:"J16",n:"9",date:"Lun 9/11",level:"chill",title:"Osaka → Hiroshima",
+       anchor:{name:"Shinkansen Osaka → Hiroshima",info:"Matin libre à Osaka, puis ~1h30 de Shinkansen. Déposer les bagages en arrivant.",wiki:"Sanyō_Shinkansen",maps:"Shin-Osaka Station"},
+       around:[
+         {t:"Matin libre Osaka",info:"Dernières courses ou spots manqués (shopping, ce qui reste)."},
+         {t:"Peace Memorial OU Miyajima selon l'heure",info:"Selon l'heure d'arrivée : soit le Mémorial de la Paix, soit Miyajima au coucher de soleil."},
+         {t:"Déposer les bagages à l'hôtel",info:"Check-in / dépôt des valises en arrivant à Hiroshima."}
+       ],
+       eat:[
+         {name:"Okonomiyaki style Hiroshima",info:"Crêpe salée en couches avec nouilles — la version d'Hiroshima. Vérifier sans porc/halal.",maps:"okonomiyaki Hiroshima"}
+       ]}
+    ]
+  },
+  {
+    id:"hiro", emoji:"🌊", name:"Hiroshima / Miyajima", span:"9 → 10 nov", nights:"1 nuit",
+    lodging:"<b>Logement :</b> près de la gare d'Hiroshima (1 nuit, départ Shinkansen — minimise les trajets valises).",
+    days:[
+      {j:"J17",n:"10",date:"Mar 10/11",level:"phare",title:"Miyajima + Peace Memorial → Tokyo",
+       anchor:{name:"Torii flottant de Miyajima",info:"Le grand torii sur l'eau, les daims, l'île sacrée. Ferry depuis Hiroshima.",wiki:"Itsukushima_Shrine",maps:"Itsukushima Shrine Miyajima floating torii"},
+       around:[
+         {t:"Peace Memorial Park + musée",info:"Parc du Mémorial de la Paix, Dôme de Genbaku et musée — lieu de mémoire de 1945 (le 9 au soir OU le 10 au matin)."},
+         {t:"Ferry Miyajima",info:"Traversée courte (~10 min) vers l'île d'Itsukushima."},
+         {t:"Puis Shinkansen ~4h vers Tokyo",info:"Long trajet Shinkansen Hiroshima → Tokyo (~4h)."}
+       ],
+       warn:"Timing serré : caler les horaires ferry + Shinkansen. Miyajima le matin puis train.",
+       eat:[
+         {name:"Okonomiyaki / repli ramen",info:"Okonomiyaki d'Hiroshima si option dispo, sinon ramen.",maps:"halal restaurant Hiroshima"}
+       ]}
+    ]
+  },
+  {
+    id:"tokyo", emoji:"🛍️", name:"Retour Tokyo", span:"10 → 14 nov", nights:"4 nuits", retour:true,
+    lodging:"<b>Logement :</b> Ueno — MIMARU Okachimachi ou Inaricho (entre Ueno et Akihabara). Shopping cadeaux + gaming + détente. Haneda accessible.",
+    days:[
+      {j:"J18",n:"11",date:"Mer 11/11",level:"chill",title:"Shopping cadeaux + Akihabara",
+       anchor:{name:"Ameyoko (Ueno)",info:"Le marché de rue pour les souvenirs pas chers, juste à côté de l'appart. Base shopping cadeaux.",wiki:"Ameyoko",maps:"Ameyoko Market Ueno Tokyo"},
+       around:[
+         {t:"Akihabara une dernière fois",info:"Dernier tour gaming/otaku (figurines, jeux) à 2 stations d'Ueno."},
+         {t:"Don Quijote pour les cadeaux faciles",info:"Magasin discount pour rafler snacks et gadgets à offrir."},
+         {t:"Se reposer, mode détente",info:"Rythme tranquille, on lève le pied après l'intensité du séjour."}
+       ],
+       eat:[
+         {name:"Gyumon ou Panga (re-test)",info:"Refaire un coup de cœur halal du début de séjour.",maps:"Gyumon Halal Ramen Asakusa"},
+         {name:"Tendon Itsuki (tempura)",info:"Bol de tempura sur riz, populaire — vérifier l'option.",maps:"Tendon Itsuki Tokyo"}
+       ]},
+
+      {j:"J19",n:"12",date:"Jeu 12/11",level:"chill",title:"Quartiers préférés",
+       anchor:{name:"Au feeling",info:"Refaire vos coups de cœur du début. Pas de programme imposé — la journée 'on se perd'.",wiki:"Shibuya"},
+       around:[
+         {t:"Odaiba (vue baie, chill)",info:"Île artificielle dans la baie : vue, grande roue, statue Gundam, ambiance détente."},
+         {t:"Hie Shrine (spot photo torii)",info:"Sanctuaire avec un tunnel de torii rouges en escalier — joli spot photo, peu fréquenté."},
+         {t:"K-BOOKS Ikebukuro (anime & goodies)",info:"Paradis des goodies anime/manga (surtout Otome Road à Ikebukuro)."}
+       ],
+       eat:[
+         {name:"Halal Sukiyaki Diyafa",info:"Sukiyaki (fondue de bœuf sucrée-salée) certifié halal — soirée plaisir.",maps:"Diyafa Halal Sukiyaki Tokyo"}
+       ]},
+
+      {j:"J20",n:"13",date:"Ven 13/11",level:"chill",title:"Footsal + Kappabashi",
+       anchor:{name:"Kappabashi",info:"La rue des ustensiles de cuisine : couteaux japonais = excellent cadeau à ramener.",wiki:"Kappabashi",maps:"Kappabashi Kitchen Town Tokyo"},
+       around:[
+         {t:"Deuxième session footsal ⚽",info:"Deuxième match — réserver le terrain à l'avance."},
+         {t:"Derniers achats ciblés",info:"On termine la liste de cadeaux/souvenirs."},
+         {t:"Soirée tranquille",info:"Dernière vraie soirée détente du voyage."}
+       ],
+       eat:[
+         {name:"Au choix selon l'envie",info:"Soirée tranquille — reprendre une adresse aimée ou tester un dernier konbini gourmet.",maps:"halal restaurant Ueno Tokyo"}
+       ]},
+
+      {j:"J21",n:"14",date:"Sam 14/11",level:"chill",title:"Dernier jour + valises",
+       anchor:{name:"Dernière journée Tokyo",info:"Check final des cadeaux, préparation des valises sans stress, dernière soirée.",wiki:"Ueno"},
+       around:[
+         {t:"Derniers achats / ce qui manque",info:"Boucler les cadeaux à Ameyoko et Akihabara, à 2 pas de l'appart."},
+         {t:"Préparation des valises (poids !)",info:"Faire les valises, surveiller le poids bagage (gare aux achats !)."},
+         {t:"Dernière soirée Tokyo",info:"Dernier dîner et balade avant le départ."}
+       ],
+       eat:[
+         {name:"Votre resto coup de cœur du voyage",info:"Le dernier dîner : on retourne à l'adresse préférée du séjour.",maps:"halal restaurant Tokyo"}
+       ]},
+
+      {j:"✈",n:"15",date:"Dim 15/11",level:"chill",title:"Vol retour — Haneda 9h50",
+       anchor:{name:"Haneda Airport",info:"Départ tôt depuis Ueno (~45 min-1h jusqu'à Haneda). Valises prêtes la veille.",wiki:"Haneda_Airport",maps:"Haneda Airport Tokyo"},
+       around:[
+         {t:"Départ hôtel très tôt",info:"Lever tôt, trajet vers Haneda (~1h porte-à-porte)."},
+         {t:"Valises prêtes la veille",info:"Tout bouclé la veille pour éviter le stress du matin."},
+         {t:"Dernier konbini à l'aéroport",info:"Ultime onigiri/snack avant l'embarquement."}
+       ],
+       eat:[]}
+    ]
+  }
+];
+
+/* ---- TRAJETS pré-remplis (logique stable du réseau, sans horaires) ----
+   Clé = uid (d<indexVille>_<n>). shinjuku / ueno = itinéraire logique.
+   base = note quand on n'est plus à Tokyo. */
+const TRANSIT = {
+  "d0_25":{shinjuku:"Sur place — tu loges à Shinjuku. Repère le konbini et la supérette les plus proches de l'appart.",
+           ueno:"Depuis Ueno : Yamanote Line (dir. Ikebukuro/Shinjuku) ~25 min jusqu'à Shinjuku, puis à pied à l'appart."},
+  "d0_26":{shinjuku:"Yamanote Line dir. Shibuya/Ebisu — 2 arrêts, ~7 min, direct. Sortie « Hachikō » pour le Crossing.",
+           ueno:"Yamanote Line dir. Tokyo/Shinagawa — ~30 min direct jusqu'à Shibuya."},
+  "d0_27":{shinjuku:"JR Chūō-Sōbu Line (jaune, locale) dir. Chiba — direct jusqu'à Akihabara, ~17 min, sans changement.",
+           ueno:"Yamanote ou Keihin-Tōhoku dir. Tokyo — 2 arrêts, ~5 min jusqu'à Akihabara."},
+  "d0_28":{shinjuku:"JR Chūō dir. Tokyo jusqu'à Kanda (~12 min), puis Ginza Line (orange) dir. Asakusa (~10 min). 1 changement, ~30 min.",
+           ueno:"Ginza Line dir. Asakusa — direct depuis Ueno, ~5 min (Asakusa = terminus)."},
+  "d0_29":{shinjuku:"À pied : ~10-12 min vers l'ouest (Nishi-Shinjuku), ou 1 arrêt Toei Ōedo jusqu'à Tochōmae.",
+           ueno:"Yamanote dir. Shinjuku ~25 min, puis ~10 min à pied jusqu'au Metropolitan Building."},
+  "d0_30":{shinjuku:"JR Shōnan-Shinjuku Line dir. Zushi/Kamakura — direct jusqu'à Kamakura, ~1h, sans changement (vérifier la destination du train).",
+           ueno:"Ueno-Tokyo Line jusqu'à Tokyo, puis JR Yokosuka Line dir. Kamakura — ~1h10, 1 changement."},
+  "d0_31":{shinjuku:"Yamanote dir. Tokyo jusqu'à Yūrakuchō, puis Yūrakuchō Line dir. Shin-Kiba jusqu'à Toyosu, puis Yurikamome → Shin-Toyosu. ~40 min, 2 changements.",
+           ueno:"Ginza Line jusqu'à Ginza, puis Yūrakuchō Line jusqu'à Toyosu, puis Yurikamome → Shin-Toyosu. ~40 min, 2 changements."},
+
+  "d1_1":{base:"Tu n'es plus à Tokyo : la journée part de Tokyo en voiture vers le lac Kawaguchi.",
+          shinjuku:"Récupération de la voiture à Tokyo, puis autoroute Chūō → Kawaguchiko (~2h). Sans voiture : bus express Shinjuku → Kawaguchiko (~1h45).",
+          ueno:"L'option transport en commun la plus simple part de Shinjuku (bus express Kawaguchiko). Depuis Ueno, rejoins Shinjuku d'abord (~25 min Yamanote)."},
+  "d1_2":{base:"Base = ryokan au lac Kawaguchi.",
+          shinjuku:"Depuis le ryokan : voiture ~15-20 min, ou Fujikyu Line 1-2 arrêts jusqu'à Fujikyu-Highland.",
+          ueno:"Depuis le ryokan : voiture ~15-20 min, ou Fujikyu Line jusqu'à Fujikyu-Highland."},
+  "d1_3":{base:"Base = ryokan au lac Kawaguchi, puis départ vers Kyoto.",
+          shinjuku:"Voiture ~15 min jusqu'au parking d'Arakurayama Sengen (puis ~400 marches). Ensuite restitution voiture + Shinkansen → Kyoto.",
+          ueno:"Voiture ~15 min jusqu'à Arakurayama Sengen, puis restitution voiture (Mishima/Shin-Fuji) + Shinkansen → Kyoto."},
+
+  "d2_4":{base:"Tu es à Kyoto : la journée part de ton logement (gare de Kyoto / Gion).",
+          shinjuku:"Depuis la gare de Kyoto : JR Nara Line dir. Nara, 2 arrêts jusqu'à Inari (~5 min). Y être avant 8h.",
+          ueno:"Depuis la gare de Kyoto : JR Nara Line, 2 arrêts jusqu'à Inari (~5 min)."},
+  "d2_5":{base:"Base = Kyoto.",
+          shinjuku:"Depuis Kyoto : JR Sagano/San-in Line dir. Kameoka jusqu'à Saga-Arashiyama (~15 min), ou tram Randen.",
+          ueno:"Depuis Kyoto : JR Sagano Line jusqu'à Saga-Arashiyama (~15 min)."},
+  "d2_6":{base:"Base = Kyoto, puis transfert vers Osaka.",
+          shinjuku:"Depuis Kyoto : bus 101/205 jusqu'au Pavillon d'Or (~40 min, pas de gare proche). Puis train Kyoto → Osaka.",
+          ueno:"Depuis Kyoto : bus 205 jusqu'à Kinkaku-ji, puis train vers Osaka l'après-midi."},
+
+  "d3_7":{base:"Base = Namba / Dōtonbori (Osaka).",
+          shinjuku:"Depuis Namba : à pied 5-10 min jusqu'au canal Dōtonbori. Château d'Osaka : métro Chūō/Tanimachi jusqu'à Tanimachi 4-chōme (~15 min).",
+          ueno:"Depuis Namba : Dōtonbori à pied, château d'Osaka en métro (~15 min)."},
+  "d3_8":{base:"Excursion à la journée depuis Osaka.",
+          shinjuku:"Depuis Namba : Kintetsu Nara Line (rapide/express) dir. Nara — direct jusqu'à Kintetsu-Nara, ~40 min. Le parc aux daims est à 5 min de la gare.",
+          ueno:"Depuis Namba : Kintetsu Nara Line jusqu'à Kintetsu-Nara (~40 min, direct)."},
+  "d3_9":{base:"Base = Namba, puis Shinkansen vers Hiroshima.",
+          shinjuku:"Depuis Namba : métro Midōsuji dir. Shin-Osaka (~10 min), puis Shinkansen Sanyō dir. Hakata jusqu'à Hiroshima (~1h30).",
+          ueno:"Depuis Namba : Midōsuji → Shin-Osaka, puis Shinkansen → Hiroshima (~1h30)."},
+
+  "d4_10":{base:"Base = hôtel près de la gare d'Hiroshima.",
+           shinjuku:"Miyajima : JR Sanyō jusqu'à Miyajimaguchi puis ferry (~10 min). Peace Memorial : tram ligne 2 depuis la gare.",
+           ueno:"Miyajima : JR + ferry depuis Miyajimaguchi. Peace Memorial : tram depuis la gare d'Hiroshima."},
+
+  "d5_11":{shinjuku:"Depuis Shinjuku (si tu y es) : Yamanote dir. Ueno ~25 min. Sinon Ameyoko est à 3-5 min à pied de l'appart d'Ueno.",
+           ueno:"Sur place : Ameyoko est entre les gares d'Ueno et Okachimachi (3-5 min à pied). Akihabara : Yamanote 2 arrêts (~5 min)."},
+  "d5_12":{shinjuku:"Depuis Shinjuku : Yamanote — Ikebukuro direct (~9 min), Odaiba via Shimbashi + Yurikamome (~40 min).",
+           ueno:"Depuis Ueno : Odaiba = Yamanote jusqu'à Shimbashi puis Yurikamome (~40 min). Ikebukuro = Yamanote direct (~15 min)."},
+  "d5_13":{shinjuku:"Depuis Shinjuku : JR/métro jusqu'à Tawaramachi (Ginza Line), Kappabashi à 5 min à pied (~35 min total).",
+           ueno:"Depuis Ueno : à pied ~15 min vers Asakusa, ou Ginza Line 2 arrêts jusqu'à Tawaramachi (~5 min) + 5 min à pied."},
+  "d5_14":{shinjuku:"Depuis Shinjuku : rejoindre Ueno (~25 min) pour les derniers achats à Ameyoko/Akihabara.",
+           ueno:"Sur place / dans le quartier d'Ueno. Derniers achats à Ameyoko et Akihabara, à 2 pas."},
+  "d5_15":{shinjuku:"Depuis Shinjuku : pour Haneda, JR jusqu'à Hamamatsuchō + Tokyo Monorail, ou Keikyū via Shinagawa (~50 min).",
+           ueno:"Depuis Ueno : Yamanote/Keihin-Tōhoku jusqu'à Hamamatsuchō + Tokyo Monorail → Haneda, ou Keikyū via Shinagawa (~45 min-1h)."}
+};
+
+/* ---- VISUELS (image principale via API Wikipédia) ---- */
+const DAY_VISUALS = {
+  "J1":[{label:"Arrivée à Tokyo",wiki:"Tokyo",emoji:"🌃",sub:"première ambiance"},{label:"Konbini japonais",wiki:"Convenience_store",emoji:"🍙",sub:"snacks & boissons"},{label:"Shinjuku de nuit",wiki:"Shinjuku",emoji:"🚶",sub:"tranquille selon fatigue"}],
+  "J2":[{label:"Shibuya Crossing",wiki:"Shibuya_Crossing",emoji:"🚦",sub:"la claque visuelle"},{label:"Shibuya PARCO",wiki:"Parco",emoji:"🕹️",sub:"Nintendo / Pokémon"},{label:"Harajuku",wiki:"Harajuku",emoji:"👟",sub:"friperies & streetwear"}],
+  "J3":[{label:"Akihabara",wiki:"Akihabara",emoji:"🎮",sub:"arcades & retrogaming"},{label:"Kanda-myōjin",wiki:"Kanda_Shrine",emoji:"⛩️",sub:"sanctuaire otaku"},{label:"Ameyoko Ueno",wiki:"Ameyoko",emoji:"🍢",sub:"marché populaire"}],
+  "J4":[{label:"Sensō-ji / Asakusa",wiki:"Sensō-ji",emoji:"⛩️",sub:"temple + Nakamise"},{label:"Yotsugi Captain Tsubasa",wiki:"Captain_Tsubasa",emoji:"⚽",sub:"statues à vélo"},{label:"Tokyo Skytree",wiki:"Tokyo_Skytree",emoji:"🗼",sub:"au passage"}],
+  "J5":[{label:"Metropolitan Building",wiki:"Tokyo_Metropolitan_Government_Building",emoji:"🌆",sub:"vue gratuite 360°"},{label:"Escalier Your Name",wiki:"Your_Name",emoji:"🎬",sub:"Suga Shrine, Yotsuya"},{label:"Golden Gai",wiki:"Golden_Gai",emoji:"🏮",sub:"ruelles & bars"}],
+  "J6":[{label:"Grand Bouddha",wiki:"Kōtoku-in",emoji:"🧘",sub:"Kamakura"},{label:"Ligne Enoden",wiki:"Enoshima_Electric_Railway",emoji:"🚃",sub:"bord de mer"},{label:"Enoshima",wiki:"Enoshima",emoji:"🌅",sub:"vue Fuji possible"}],
+  "J7":[{label:"teamLab Planets",wiki:"TeamLab",emoji:"✨",sub:"réservation"},{label:"Gōtoku-ji",wiki:"Gōtoku-ji",emoji:"🐱",sub:"temple aux chats"},{label:"Halloween Tokyo",wiki:"Halloween",emoji:"🎃",sub:"soir encadré"},{label:"Futsal",wiki:"Futsal",emoji:"⚽",sub:"session footsalle"}],
+  "J8":[{label:"Mont Fuji",wiki:"Mount_Fuji",emoji:"🗻",sub:"Tokyo → Kawaguchiko"},{label:"Lac Kawaguchi",wiki:"Lake_Kawaguchi",emoji:"🚗",sub:"coucher de soleil"},{label:"Ryokan / onsen",wiki:"Ryokan_(inn)",emoji:"♨️",sub:"budget logement"}],
+  "J9":[{label:"Fuji-Q Highland",wiki:"Fuji-Q_Highland",emoji:"🎢",sub:"parc d'attractions"},{label:"Naruto",wiki:"Naruto",emoji:"🍥",sub:"zone anime"},{label:"Mont Fuji momiji",wiki:"Mount_Fuji",emoji:"🍁",sub:"vue panoramique"}],
+  "J10":[{label:"Chūreitō Pagoda",wiki:"Arakurayama_Sengen_Park",emoji:"⛩️",sub:"vue carte postale"},{label:"Lac Kawaguchi",wiki:"Lake_Kawaguchi",emoji:"🍁",sub:"spots photo"},{label:"Shinkansen",wiki:"Shinkansen",emoji:"🚄",sub:"→ Kyoto"}],
+  "J11":[{label:"Fushimi Inari",wiki:"Fushimi_Inari-taisha",emoji:"⛩️",sub:"avant 8h"},{label:"Kiyomizu-dera",wiki:"Kiyomizu-dera",emoji:"🍁",sub:"Sannenzaka/Ninenzaka"},{label:"Gion",wiki:"Gion",emoji:"🏮",sub:"ruelles traditionnelles"}],
+  "J12":[{label:"Bambous Arashiyama",wiki:"Arashiyama",emoji:"🎋",sub:"très tôt"},{label:"Monkey Park",wiki:"Iwatayama_Monkey_Park",emoji:"🐒",sub:"vue Kyoto"},{label:"Togetsukyō",wiki:"Togetsukyō_Bridge",emoji:"🌉",sub:"balade momiji"}],
+  "J13":[{label:"Kinkaku-ji",wiki:"Kinkaku-ji",emoji:"🏯",sub:"matin libre"},{label:"Nishiki Market",wiki:"Nishiki_Market",emoji:"🍡",sub:"cafés & marché"},{label:"Vers Osaka",wiki:"Keihan_Main_Line",emoji:"🚆",sub:"transfert court"}],
+  "J14":[{label:"Château d'Osaka",wiki:"Osaka_Castle",emoji:"🏯",sub:"parc & photos"},{label:"Dōtonbori",wiki:"Dōtonbori",emoji:"🌃",sub:"néons & street food"},{label:"Amerikamura",wiki:"Amerikamura",emoji:"👕",sub:"friperies"},{label:"Karaoké",wiki:"Karaoke_box",emoji:"🎤",sub:"soirée"}],
+  "J15":[{label:"Tōdai-ji",wiki:"Tōdai-ji",emoji:"🏯",sub:"Grand Bouddha"},{label:"Daims de Nara",wiki:"Nara_Park",emoji:"🦌",sub:"en liberté"},{label:"Kasuga-taisha",wiki:"Kasuga-taisha",emoji:"🏮",sub:"lanternes"},{label:"Naramachi",wiki:"Naramachi",emoji:"🏘️",sub:"vieille ville"}],
+  "J16":[{label:"Namba Osaka",wiki:"Namba",emoji:"🛍️",sub:"matin libre"},{label:"Shinkansen",wiki:"Shinkansen",emoji:"🚄",sub:"Osaka → Hiroshima"},{label:"Peace Memorial",wiki:"Hiroshima_Peace_Memorial_Park",emoji:"🕊️",sub:"selon l'heure"},{label:"Miyajima sunset",wiki:"Itsukushima_Shrine",emoji:"🌅",sub:"option coucher"}],
+  "J17":[{label:"Peace Memorial",wiki:"Hiroshima_Peace_Memorial",emoji:"🕊️",sub:"matin"},{label:"Torii flottant",wiki:"Itsukushima_Shrine",emoji:"⛩️",sub:"Miyajima"},{label:"Retour Tokyo",wiki:"Shinkansen",emoji:"🚄",sub:"~4h de train"}],
+  "J18":[{label:"Ameyoko",wiki:"Ameyoko",emoji:"🍡",sub:"souvenirs"},{label:"Akihabara",wiki:"Akihabara",emoji:"🎮",sub:"figurines & jeux"},{label:"Don Quijote",wiki:"Don_Quijote_(store)",emoji:"🛍️",sub:"cadeaux faciles"}],
+  "J19":[{label:"Shibuya",wiki:"Shibuya",emoji:"🌃",sub:"coups de cœur"},{label:"Odaiba",wiki:"Odaiba",emoji:"🌉",sub:"option chill"},{label:"Hie Shrine",wiki:"Hie_Shrine",emoji:"⛩️",sub:"spot photo"},{label:"Ikebukuro",wiki:"Ikebukuro",emoji:"📚",sub:"anime & goodies"}],
+  "J20":[{label:"Futsal",wiki:"Futsal",emoji:"⚽",sub:"deuxième session"},{label:"Kappabashi",wiki:"Kappabashi",emoji:"🔪",sub:"couteaux = cadeaux"},{label:"Tokyo de nuit",wiki:"Tokyo",emoji:"🏮",sub:"tranquille"}],
+  "J21":[{label:"Derniers achats",wiki:"Ueno",emoji:"🛍️",sub:"check cadeaux"},{label:"Valises",wiki:"Baggage",emoji:"🧳",sub:"poids + organisation"},{label:"Tokyo skyline",wiki:"Tokyo",emoji:"🌃",sub:"dernier tour"}],
+  "✈":[{label:"Haneda Airport",wiki:"Haneda_Airport",emoji:"✈️",sub:"vol 9h50"},{label:"Départ",wiki:"Boeing_777",emoji:"🌅",sub:"départ tôt"}],
+};
+
+/* ============ IMAGES WIKIPÉDIA ============ */
+const _imgCache = {};
+function fallbackSvg(label, emoji){
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="650" viewBox="0 0 900 650">
+    <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#27384f"/><stop offset=".55" stop-color="#b1322b"/><stop offset="1" stop-color="#c08a2d"/></linearGradient></defs>
+    <rect width="900" height="650" fill="url(#g)"/><circle cx="760" cy="110" r="88" fill="rgba(244,239,230,.22)"/><text x="60" y="265" font-size="96">${emoji||"🇯🇵"}</text>
+    <text x="60" y="370" font-family="Georgia, serif" font-size="58" font-weight="700" fill="#fbf8f2">${(label||"Japon").slice(0,22)}</text>
+    <text x="60" y="430" font-family="Arial" font-size="24" fill="rgba(251,248,242,.82)">Japon 2026 · ajoute ta photo ↓</text>
+  </svg>`;
+  return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+}
+async function wikiImage(title, lang){
+  lang = lang || "en";
+  const ck = lang+":"+title;
+  if(_imgCache[ck] !== undefined) return _imgCache[ck];
+  const api = `https://${lang}.wikipedia.org/w/api.php?action=query&format=json&origin=*`+
+              `&prop=pageimages&piprop=thumbnail&pithumbsize=900&redirects=1&titles=`+encodeURIComponent(title);
+  try{
+    const r = await fetch(api); const j = await r.json();
+    const pages = j.query.pages; const page = pages[Object.keys(pages)[0]];
+    const src = page && page.thumbnail ? page.thumbnail.source : null;
+    _imgCache[ck] = src; return src;
+  }catch(e){ _imgCache[ck] = null; return null; }
+}
+function hydrateVisual(imgEl, v){
+  const fb = fallbackSvg(v.label, v.emoji);
+  if(v.url){ const probe=new Image(); probe.onload=()=>{imgEl.src=v.url;imgEl.classList.add('loaded');}; probe.onerror=()=>{imgEl.src=fb;}; probe.src=v.url; return; }
+  if(!v.wiki){ imgEl.src = fb; return; }
+  wikiImage(v.wiki, v.lang).then(src=>{
+    if(src){ const probe = new Image(); probe.onload = ()=>{ imgEl.src = src; imgEl.classList.add('loaded'); }; probe.onerror = ()=>{ imgEl.src = fb; }; probe.src = src; }
+    else { imgEl.src = fb; }
+  });
+}
+/* visuels = éditables/synchronisés : par défaut DAY_VISUALS, puis override stocké par version */
+function renderVisualsHTML(uid, d, city, editing){
+  const items = getVisuals(uid, d);
+  if(!items.length && !editing) return "";
+  const cards = items.map((v,idx)=>{
+    const label = esc(v.label || d.title), emoji = esc(v.emoji || city.emoji || "🇯🇵"), sub = esc(v.sub || "");
+    return `<figure class="visual-card${v.big?' big':''}" data-vidx="${idx}">
+      <img class="vimg" data-vkey="${uid}|${idx}" loading="lazy" alt="${label}">
+      <span class="visual-emoji">${emoji}</span>
+      <figcaption class="visual-cap"><b>${label}</b>${sub?`<span>${sub}</span>`:''}</figcaption>
+      ${editing?`<div class="vctrl">
+        <button type="button" data-vact="big" title="${v.big?'Réduire':'Agrandir (gros)'}">${v.big?'▢':'⤢'}</button>
+        <button type="button" data-vact="edit" title="Modifier la légende">✎</button>
+        <button type="button" data-vact="del" title="Supprimer">✕</button>
+      </div>`:''}
+    </figure>`;
+  }).join("");
+  const addTile = editing?`<button type="button" class="visual-add" data-vact="add"><span class="plus">＋</span><span>ajouter une image</span></button>`:'';
+  const src = items.length?`<div class="visual-source">${editing?'Mode édition : ajoute (URL ou Wikipédia), supprime, ou passe une image en « gros ».':'Photos des lieux (Wikipédia / perso) — passe en mode édition pour tout changer.'}</div>`:'';
+  return `<div class="visuals-grid">${cards}${addTile}</div>${src}`;
+}
+
+/* ============ STOCKAGE + SYNCHRO ============ */
+const KEY="japon2026";
+let store = {};
+let socket = null, online = false, ME = null, booted = false;
+
+function esc(s){return (s==null?"":String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function gmapsLink(q){return "https://www.google.com/maps/search/"+encodeURIComponent(q+" Japan");}
+function guideLink(q){return "https://www.google.com/search?q="+encodeURIComponent(q+" Japan guide (site:japan-guide.com OR site:gotokyo.org OR site:insidekyoto.com OR site:timeout.com)");}
+
+function field(id, def){ return (store[id]!==undefined)?store[id]:def; }
+/* setField : met à jour localement + diffuse (online) ou sauvegarde locale (offline) */
+function setField(id,val){
+  store[id]=val;
+  if(online && socket){ socket.emit('op',{fid:id,value:val}); flashSaved(); }
+  else { queueLocalSave(); }
+}
+let saveTimer=null;
+function queueLocalSave(){ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ try{ sessionStorage.setItem(KEY, JSON.stringify(store)); }catch(e){} flashSaved(); },400); }
+function flashSaved(){ const p=document.getElementById('savePill'); p.classList.add('show'); clearTimeout(p._t); p._t=setTimeout(()=>p.classList.remove('show'),1100); }
+
+/* ---- application d'une opération reçue d'un autre utilisateur ---- */
+function remoteRebuild(uid){
+  const day=document.querySelector('.day[data-uid="'+uid+'"]');
+  if(day && day.contains(document.activeElement)) return; // ne pas casser une saisie en cours
+  rebuildDayByUid(uid);
+}
+function applyOp(fid, val){
+  store[fid]=val;
+  if(/_done$/.test(fid)){ remoteRebuild(fid.replace(/_done$/,'')); updateProgress(); return; }
+  if(/_photos$/.test(fid)){ const uid=fid.replace(/_photos$/,''); const c=document.querySelector('[data-photos="'+uid+'"]'); if(c) renderPhotos(c,uid, editMode.has(uid)); return; }
+  if(/_versions$/.test(fid)){ remoteRebuild(fid.replace(/_versions$/,'')); return; }
+  // champ texte inline présent ?
+  const el=document.querySelector('[data-fid="'+fid+'"]');
+  if(el && el!==document.activeElement && (el.tagName==='TEXTAREA'||el.tagName==='INPUT'||el.isContentEditable)){
+    if(el.tagName==='TEXTAREA'||el.tagName==='INPUT') el.value=val; else el.textContent=val;
+    return;
+  }
+  // champs structurés versionnés (images/restos) -> reconstruire le jour s'il est affiché
+  const parts=fid.split('__');
+  if(parts.length===3){ const uid=parts[0], ver=parts[1], suffix=parts[2]; if(['visuals','eat','around','schedule'].includes(suffix) && DAYINDEX[uid] && activeVer(uid)===ver) remoteRebuild(uid); }
+}
+
+/* ============ VERSIONS (par jour) ============ */
+function getVersions(uid){ return field(uid+'_versions',[{id:'base',name:'Plan principal'}]); }
+function activeVer(uid){
+  const list=getVersions(uid); const ids=list.map(v=>v.id);
+  let av=null; try{ av=localStorage.getItem('av_'+KEY+'_'+uid); }catch(e){}
+  if(av && ids.includes(av)) return av;
+  return list[0].id;
+}
+function setActiveVerLocal(uid,vid){ try{ localStorage.setItem('av_'+KEY+'_'+uid,vid); }catch(e){} }
+/* clé d'un champ versionné */
+function vf(uid,suffix){ return uid+'__'+activeVer(uid)+'__'+suffix; }
+function verSuffixes(d){ return ['title','aname','ainfo','eatnote','plannote','note','visuals','eat','around','schedule']; }
+
+function addVersion(uid,d){
+  const list=getVersions(uid);
+  const name=prompt('Nom de la nouvelle version (ex: "Plan pluie", "Variante chill") ?','Variante '+(list.length+1));
+  if(name===null) return;
+  const id='v'+Date.now();
+  const cur=activeVer(uid);
+  verSuffixes(d).forEach(s=>{
+    const from=uid+'__'+cur+'__'+s;
+    if(store[from]!==undefined){ store[uid+'__'+id+'__'+s]=store[from]; if(online&&socket) socket.emit('op',{fid:uid+'__'+id+'__'+s,value:store[from]}); }
+  });
+  list.push({id,name:(name.trim()||('Variante '+(list.length+1))).slice(0,40)});
+  setField(uid+'_versions',list);
+  setActiveVerLocal(uid,id);
+  rebuildDayByUid(uid);
+}
+function renameVersion(uid){
+  const list=getVersions(uid); const cur=activeVer(uid);
+  const idx=list.findIndex(v=>v.id===cur);
+  if(idx<0) return;
+  const name=prompt('Renommer cette version :',list[idx].name);
+  if(name===null) return;
+  list[idx]={...list[idx],name:(name.trim()||list[idx].name).slice(0,40)};
+  setField(uid+'_versions',list);
+  rebuildDayByUid(uid);
+}
+function deleteVersion(uid){
+  const list=getVersions(uid);
+  if(list.length<=1){ alert('Impossible de supprimer la seule version.'); return; }
+  const cur=activeVer(uid);
+  if(cur==='base'){ alert('Le plan principal ne peut pas être supprimé.'); return; }
+  if(!confirm('Supprimer cette version ? (le contenu de cette variante sera perdu)')) return;
+  const neo=list.filter(v=>v.id!==cur);
+  setField(uid+'_versions',neo);
+  setActiveVerLocal(uid,neo[0].id);
+  rebuildDayByUid(uid);
+}
+
+/* ============ ÉDITION (images / photos / restos) ============ */
+const editMode = new Set();   // uids en cours d'édition (local, par appareil)
+const planMode = new Set();   // uids affichés en vue "planning du jour"
+function escAttr(s){ return esc(s).replace(/"/g,'&quot;'); }
+
+function getVisuals(uid,d){ return field(vf(uid,'visuals'), (DAY_VISUALS[d.j]||[]).map(v=>({...v}))); }
+function setVisuals(uid,arr){ setField(vf(uid,'visuals'), arr); }
+function getEat(uid,d){ return field(vf(uid,'eat'), (d.eat||[]).map(r=>({...r}))); }
+function setEat(uid,arr){ setField(vf(uid,'eat'), arr); }
+function getPhotos(uid){ return field(uid+'_photos',[]).map(p=> (typeof p==='string')?{src:p,big:false}:p); }
+function setPhotos(uid,arr){ setField(uid+'_photos', arr); }
+function eatHref(r){ return (r.maps && /^https?:\/\//i.test(r.maps)) ? r.maps : gmapsLink(r.maps||r.name); }
+
+function renderEatHTML(uid,d,editing){
+  const eat=getEat(uid,d);
+  if(editing){
+    const rows=eat.map((r,i)=>`<div class="eat-edit" data-eidx="${i}">
+      <input class="ee-name" placeholder="Nom du resto" value="${escAttr(r.name||'')}">
+      <input class="ee-maps" placeholder="Lien Maps (http…) ou recherche" value="${escAttr(r.maps||'')}">
+      <textarea class="ee-info" placeholder="Explication / avis">${esc(r.info||'')}</textarea>
+      <button type="button" class="ee-del">✕ retirer ce resto</button>
+    </div>`).join("");
+    return `<div class="eat-block"><div class="eat-label">🍴 Où manger — édition</div>${rows}
+      <button type="button" class="eat-add">＋ ajouter un resto</button>
+      <textarea class="eatnote" data-fid="${vf(uid,'eatnote')}" placeholder="Note resto du groupe…">${esc(field(vf(uid,'eatnote'),""))}</textarea></div>`;
+  }
+  if(!eat.length) return "";
+  const items=eat.map(r=>`<li class="eat-item"><a class="eat-name" href="${eatHref(r)}" target="_blank" rel="noopener">${esc(r.name)} <span class="pin">📍↗</span></a>${r.info?`<span class="eat-info">${esc(r.info)}</span>`:''}</li>`).join("");
+  return `<div class="eat-block"><div class="eat-label">🍴 Où manger</div><ul class="eat-list">${items}</ul>
+    <textarea class="eatnote" data-fid="${vf(uid,'eatnote')}" placeholder="Note resto du groupe : réservation, qui a testé, avis…">${esc(field(vf(uid,'eatnote'),""))}</textarea></div>`;
+}
+
+function bindVisualControls(day,uid,d){
+  const grid=day.querySelector('.visuals-grid'); if(!grid) return;
+  grid.addEventListener('click',e=>{
+    const btn=e.target.closest('[data-vact]'); if(!btn) return;
+    const act=btn.dataset.vact; const arr=getVisuals(uid,d);
+    if(act==='add'){
+      const label=prompt("Légende de l'image ?","Nouveau lieu"); if(label===null) return;
+      const srcIn=prompt("Image : colle une URL (http…) OU un titre d'article Wikipédia :",""); if(srcIn===null) return;
+      const sub=(prompt("Sous-titre (optionnel) :","")||"").trim();
+      const v={label:(label.trim()||"Image"), sub};
+      const s=srcIn.trim();
+      if(/^https?:\/\//i.test(s)) v.url=s; else if(s) v.wiki=s;
+      arr.push(v); setVisuals(uid,arr); rebuildDayByUid(uid); return;
+    }
+    const fig=btn.closest('[data-vidx]'); if(!fig) return; const idx=+fig.dataset.vidx;
+    if(act==='del'){ if(!confirm("Supprimer cette image ?")) return; arr.splice(idx,1); setVisuals(uid,arr); rebuildDayByUid(uid); }
+    else if(act==='big'){ arr[idx]={...arr[idx],big:!arr[idx].big}; setVisuals(uid,arr); rebuildDayByUid(uid); }
+    else if(act==='edit'){
+      const l=prompt("Légende :",arr[idx].label||""); if(l!==null) arr[idx].label=l.trim();
+      const s=prompt("Sous-titre :",arr[idx].sub||""); if(s!==null) arr[idx].sub=s.trim();
+      setVisuals(uid,arr); rebuildDayByUid(uid);
+    }
+  });
+}
+
+function bindEatControls(day,uid,d){
+  const block=day.querySelector('.eat-block'); if(!block) return;
+  const addBtn=block.querySelector('.eat-add');
+  if(addBtn) addBtn.addEventListener('click',()=>{ const arr=getEat(uid,d); arr.push({name:"Nouveau resto",maps:"",info:""}); setEat(uid,arr); rebuildDayByUid(uid); });
+  block.querySelectorAll('.eat-edit').forEach(row=>{
+    const idx=+row.dataset.eidx;
+    const upd=()=>{ const arr=getEat(uid,d); if(!arr[idx]) return; arr[idx]={name:row.querySelector('.ee-name').value, maps:row.querySelector('.ee-maps').value, info:row.querySelector('.ee-info').value}; setEat(uid,arr); };
+    row.querySelector('.ee-name').addEventListener('change',upd);
+    row.querySelector('.ee-maps').addEventListener('change',upd);
+    row.querySelector('.ee-info').addEventListener('change',upd);
+    row.querySelector('.ee-del').addEventListener('click',()=>{ const arr=getEat(uid,d); arr.splice(idx,1); setEat(uid,arr); rebuildDayByUid(uid); });
+  });
+}
+
+/* ---- AUTOUR / si l'envie (liste extensible) ---- */
+function getAround(uid,d){ return field(vf(uid,'around'), (d.around||[]).map(a=>({...a}))); }
+function setAround(uid,arr){ setField(vf(uid,'around'), arr); }
+function renderAroundHTML(uid,d,editing){
+  const arr=getAround(uid,d);
+  if(editing){
+    const rows=arr.map((a,i)=>`<div class="eat-edit" data-aidx="${i}">
+      <input class="aa-t" placeholder="Lieu / activité" value="${escAttr(a.t||'')}">
+      <input class="aa-info" placeholder="Courte explication (optionnel)" value="${escAttr(a.info||'')}">
+      <button type="button" class="aa-del">✕ retirer</button>
+    </div>`).join("");
+    return `<div class="around-block"><div class="around-label">autour / si l'envie — édition</div>${rows}
+      <button type="button" class="around-add">＋ ajouter un lieu</button></div>`;
+  }
+  if(!arr.length) return "";
+  const items=arr.map(a=>`<li>
+    <span class="dot">·</span>
+    <div class="act-main"><span class="txt">${esc(a.t)}</span>${a.info?`<span class="act-info">${esc(a.info)}</span>`:''}</div>
+    <a class="gmaps" href="${gmapsLink(a.t)}" target="_blank" rel="noopener">carte ↗</a>
+  </li>`).join("");
+  return `<div class="around-block"><div class="around-label">autour / si l'envie :</div><ul class="acts">${items}</ul></div>`;
+}
+function bindAroundControls(day,uid,d){
+  const block=day.querySelector('.around-block'); if(!block) return;
+  const add=block.querySelector('.around-add');
+  if(add) add.addEventListener('click',()=>{ const arr=getAround(uid,d); arr.push({t:"Nouveau lieu",info:""}); setAround(uid,arr); rebuildDayByUid(uid); });
+  block.querySelectorAll('[data-aidx]').forEach(row=>{
+    const i=+row.dataset.aidx;
+    const upd=()=>{ const arr=getAround(uid,d); if(!arr[i])return; arr[i]={t:row.querySelector('.aa-t').value, info:row.querySelector('.aa-info').value}; setAround(uid,arr); };
+    row.querySelector('.aa-t').addEventListener('change',upd);
+    row.querySelector('.aa-info').addEventListener('change',upd);
+    row.querySelector('.aa-del').addEventListener('click',()=>{ const arr=getAround(uid,d); arr.splice(i,1); setAround(uid,arr); rebuildDayByUid(uid); });
+  });
+}
+
+/* ---- PLANNING DU JOUR (vue plein-card, planning par heure) ---- */
+function defaultSchedule(d){
+  const a=(d.anchor&&d.anchor.name)||d.title;
+  return [
+    {time:"",act:"Réveil / petit-déj",note:""},
+    {time:"",act:"Départ du logement",note:"voir le trajet ci-dessus"},
+    {time:"",act:a,note:""},
+    {time:"",act:"Déjeuner",note:""},
+    {time:"",act:"Autour / si l'envie",note:""},
+    {time:"",act:"Dîner",note:""},
+    {time:"",act:"Retour",note:""}
+  ];
+}
+function getSchedule(uid,d){ return field(vf(uid,'schedule'), defaultSchedule(d)); }
+function setSchedule(uid,arr){ setField(vf(uid,'schedule'), arr); }
+
+function buildPlanningCard(city, ci, d){
+  const uid="d"+ci+"_"+d.n; DAYINDEX[uid]={city,ci,d};
+  const title=field(vf(uid,'title'), d.title);
+  const t=TRANSIT[uid]||{}; const defFrom=city.retour?'ueno':'shinjuku';
+  const routeS=t.shinjuku||"Itinéraire à compléter."; const routeU=t.ueno||"Itinéraire à compléter.";
+  const baseNote=t.base?`<div class="plan-base">ℹ️ ${esc(t.base)}</div>`:'';
+  const versions=getVersions(uid); const av=activeVer(uid);
+  const verOptions=versions.map(v=>`<option value="${v.id}" ${v.id===av?'selected':''}>${esc(v.name)}</option>`).join("");
+  const sched=getSchedule(uid,d);
+  const rows=sched.map((s,i)=>`<tr data-sidx="${i}">
+    <td class="c-time"><input class="s-time" placeholder="08:00" value="${escAttr(s.time||'')}"></td>
+    <td><input class="s-act" placeholder="Étape" value="${escAttr(s.act||'')}"></td>
+    <td><input class="s-note" placeholder="détails, ligne, quai, budget…" value="${escAttr(s.note||'')}"></td>
+    <td class="c-del"><button type="button" class="s-del" title="Supprimer la ligne">✕</button></td>
+  </tr>`).join("");
+
+  const day=document.createElement('div'); day.className='day planning-mode'; day.dataset.uid=uid;
+  day.innerHTML=`
+    <div class="day-top">
+      <div class="day-num ${d.level==='phare'?'is-phare':''}">
+        <span class="j">${d.j}</span><span class="n">${d.n}</span>
+        <span class="date">${d.date.split(' ').slice(1).join(' ')}</span>
+      </div>
+      <div class="day-body">
+        <h3><span class="ttl">${esc(title)}</span> <span class="lvl chill">🗺️ Planning du jour</span></h3>
+        <div class="plan-block">
+          <div class="plan-switch">
+            <button type="button" data-from="shinjuku" class="${defFrom==='shinjuku'?'active':''}">🚉 Depuis Shinjuku</button>
+            <button type="button" data-from="ueno" class="${defFrom==='ueno'?'active':''}">🚉 Depuis Ueno</button>
+          </div>
+          <div class="plan-route" data-route="shinjuku" ${defFrom==='shinjuku'?'':'hidden'}><span class="train">🚆</span><span>${esc(routeS)}</span></div>
+          <div class="plan-route" data-route="ueno" ${defFrom==='ueno'?'':'hidden'}><span class="train">🚆</span><span>${esc(routeU)}</span></div>
+          ${baseNote}
+        </div>
+        <table class="sched"><thead><tr><th>Heure</th><th>Étape</th><th>Notes</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+        <button type="button" class="sched-add">＋ ajouter une ligne</button>
+        <div class="plan-note-label">Notes générales du jour :</div>
+        <textarea class="plan-note" data-fid="${vf(uid,'plannote')}" placeholder="RDV, réservations, budget, imprévus…">${esc(field(vf(uid,'plannote'),""))}</textarea>
+      </div>
+    </div>
+    <div class="day-foot">
+      <button class="foot-btn" data-act="back">← Retour au jour</button>
+      <span class="foot-spacer"></span>
+      <span class="versions"><span>Version :</span><select class="ver-select">${verOptions}</select></span>
+    </div>`;
+
+  // retour
+  day.querySelector('[data-act="back"]').addEventListener('click',()=>{ planMode.delete(uid); rebuildDayByUid(uid); });
+  // switch Shinjuku/Ueno
+  day.querySelectorAll('.plan-switch button').forEach(b=>{
+    b.addEventListener('click',()=>{ const from=b.dataset.from;
+      day.querySelectorAll('.plan-switch button').forEach(x=>x.classList.toggle('active',x===b));
+      day.querySelectorAll('[data-route]').forEach(r=>r.hidden=(r.dataset.route!==from)); });
+  });
+  // version
+  day.querySelector('.ver-select').addEventListener('change',e=>{ setActiveVerLocal(uid,e.target.value); rebuildDayByUid(uid); });
+  // lignes du planning
+  const updRow=(row)=>{ const i=+row.dataset.sidx; const arr=getSchedule(uid,d); if(!arr[i])return; arr[i]={time:row.querySelector('.s-time').value, act:row.querySelector('.s-act').value, note:row.querySelector('.s-note').value}; setSchedule(uid,arr); };
+  day.querySelectorAll('tr[data-sidx]').forEach(row=>{
+    row.querySelectorAll('input').forEach(inp=>inp.addEventListener('change',()=>updRow(row)));
+    row.querySelector('.s-del').addEventListener('click',()=>{ const i=+row.dataset.sidx; const arr=getSchedule(uid,d); arr.splice(i,1); setSchedule(uid,arr); rebuildDayByUid(uid); });
+  });
+  day.querySelector('.sched-add').addEventListener('click',()=>{ const arr=getSchedule(uid,d); arr.push({time:"",act:"",note:""}); setSchedule(uid,arr); rebuildDayByUid(uid); });
+  bindEditables(day);
+  return day;
+}
+
+/* ============ RENDU ============ */
+function renderPrep(){
+  const ul=document.getElementById('prepList'); ul.innerHTML="";
+  PREP.forEach((txt,i)=>{
+    const id="prep_"+i; const li=document.createElement('li');
+    const checked=field(id+"_chk",false);
+    li.innerHTML=`<span class="dot">◇</span><label class="check" style="font-size:14px"><input type="checkbox" ${checked?'checked':''}><span class="box">${checked?'✓':''}</span><span>${txt}</span></label>`;
+    const inp=li.querySelector('input');
+    inp.addEventListener('change',()=>{ setField(id+"_chk",inp.checked); li.querySelector('.box').textContent=inp.checked?'✓':''; });
+    ul.appendChild(li);
+  });
+}
+
+const DAYINDEX={};   // uid -> {city, ci, d}
+
+function buildDay(city, ci, d){
+  const uid="d"+ci+"_"+d.n;
+  DAYINDEX[uid]={city,ci,d};
+  if(planMode.has(uid)) return buildPlanningCard(city, ci, d);
+  const tagClass=city.id;
+  const title=field(vf(uid,'title'), d.title);
+  const note=field(vf(uid,'note'),"");
+  const done=field(uid+"_done",false);
+  const editing=editMode.has(uid);
+
+  const day=document.createElement('div');
+  day.className='day'+(done?' done':'')+(editing?' editing':'');
+  day.dataset.uid=uid;
+
+  // ancre
+  const A=d.anchor||{name:title,info:""};
+  const aName=field(vf(uid,'aname'), A.name);
+  const aInfo=field(vf(uid,'ainfo'), A.info||"");
+  const mapsQ=A.maps||A.name, guideQ=A.name;
+  const anchorLinks=`
+    <a class="lk maps" href="${gmapsLink(mapsQ)}" target="_blank" rel="noopener"><span>📍</span> Maps</a>
+    <a class="lk guide" href="${guideLink(guideQ)}" target="_blank" rel="noopener"><span>📖</span> guide</a>
+    ${A.wiki?`<a class="lk info" href="https://fr.wikipedia.org/wiki/${encodeURIComponent(A.wiki)}" target="_blank" rel="noopener"><span>ⓘ</span> wiki</a>`:''}`;
+  const levelBadge=d.level==='phare'?`<span class="lvl phare">🔥 journée phare</span>`:`<span class="lvl chill">🍵 journée chill</span>`;
+
+  // satellites (liste extensible) + manger (éditables + synchronisés)
+  const aroundHtml=renderAroundHTML(uid,d,editing);
+  const eatHtml=renderEatHTML(uid,d,editing);
+
+  // versions select
+  const versions=getVersions(uid); const av=activeVer(uid);
+  const verOptions=versions.map(v=>`<option value="${v.id}" ${v.id===av?'selected':''}>${esc(v.name)}</option>`).join("");
+
+  day.innerHTML=`
+    <div class="day-top">
+      <div class="day-num ${d.level==='phare'?'is-phare':''}">
+        <span class="j">${d.j}</span><span class="n">${d.n}</span>
+        <span class="date">${d.date.split(' ').slice(1).join(' ')}</span>
+      </div>
+      <div class="day-body">
+        <h3>
+          <span class="ttl" contenteditable="true" data-fid="${vf(uid,'title')}">${esc(title)}</span>
+          <span class="tag ${tagClass}">${city.retour?'retour':city.name.split(' ')[0]}</span>
+          ${levelBadge}
+        </h3>
+
+        <div class="anchor">
+          <div class="anchor-head">
+            <span class="anchor-pin">🎯</span>
+            <span class="anchor-name" contenteditable="true" data-fid="${vf(uid,'aname')}">${esc(aName)}</span>
+            <span class="anchor-links">${anchorLinks}</span>
+          </div>
+          <div class="anchor-info" contenteditable="true" data-fid="${vf(uid,'ainfo')}" data-ph="Ajoute une note sur ce lieu…">${esc(aInfo)}</div>
+        </div>
+
+        ${aroundHtml}
+        ${d.warn?`<div class="warn"><span>⚠️</span><span>${esc(d.warn)}</span></div>`:''}
+        ${eatHtml}
+        ${renderVisualsHTML(uid, d, city, editing)}
+        <div class="photos" data-photos="${uid}"></div>
+      </div>
+    </div>
+    <div class="day-foot">
+      <label class="check"><input type="checkbox" ${done?'checked':''}><span class="box">${done?'✓':''}</span><span>Journée faite</span></label>
+      <button class="foot-btn" data-act="plan">🚉 Planning / trajet</button>
+      <button class="foot-btn" data-act="note">📝 ${note?'voir la note':'ajouter une note'}</button>
+      <button class="foot-btn${editing?' editing-on':''}" data-act="edit">${editing?"✓ Terminer l'édition":"✏️ Mode édition"}</button>
+      <span class="foot-spacer"></span>
+      <span class="versions">
+        <span>Version :</span>
+        <select class="ver-select">${verOptions}</select>
+        <button class="ver-mini" data-act="ver-add" title="Nouvelle version">＋</button>
+        <button class="ver-mini" data-act="ver-rename" title="Renommer">✎</button>
+        <button class="ver-mini" data-act="ver-del" title="Supprimer cette version">🗑</button>
+      </span>
+    </div>
+    <div class="note-wrap" style="padding:0 17px 13px;${note?'':'display:none'}">
+      <textarea class="note ${note?'open':''}" data-fid="${vf(uid,'note')}" placeholder="Tes notes : réservations, horaires, idées...">${esc(note)}</textarea>
+    </div>
+  `;
+
+  // done toggle
+  const chk=day.querySelector('.day-foot input');
+  chk.addEventListener('change',()=>{ setField(uid+"_done",chk.checked); day.classList.toggle('done',chk.checked); day.querySelector('.day-foot .box').textContent=chk.checked?'✓':''; updateProgress(); });
+
+  // entrer en vue planning du jour
+  day.querySelector('[data-act="plan"]').addEventListener('click',()=>{ planMode.add(uid); rebuildDayByUid(uid); });
+
+  // note toggle
+  const noteWrap=day.querySelector('.note-wrap'); const noteEl=day.querySelector('.note');
+  day.querySelector('[data-act="note"]').addEventListener('click',()=>{ const open=noteEl.classList.toggle('open'); noteWrap.style.display=open?'block':(noteEl.value?'block':'none'); if(open) noteEl.focus(); });
+
+  // versions
+  day.querySelector('.ver-select').addEventListener('change',e=>{ setActiveVerLocal(uid,e.target.value); rebuildDayByUid(uid); });
+  day.querySelector('[data-act="ver-add"]').addEventListener('click',()=>addVersion(uid,d));
+  day.querySelector('[data-act="ver-rename"]').addEventListener('click',()=>renameVersion(uid));
+  day.querySelector('[data-act="ver-del"]').addEventListener('click',()=>deleteVersion(uid));
+
+  // persistance des champs éditables
+  bindEditables(day);
+
+  // bascule mode édition + contrôles d'édition
+  day.querySelector('[data-act="edit"]').addEventListener('click',()=>{ editMode.has(uid)?editMode.delete(uid):editMode.add(uid); rebuildDayByUid(uid); });
+  if(editing){ bindVisualControls(day,uid,d); bindEatControls(day,uid,d); bindAroundControls(day,uid,d); }
+
+  // photos + images
+  renderPhotos(day.querySelector('[data-photos]'), uid, editing);
+  day.querySelectorAll('img.vimg').forEach(imgEl=>{ const idx=+imgEl.dataset.vkey.split('|')[1]; const v=getVisuals(uid,d)[idx]; if(v) hydrateVisual(imgEl, v); });
+
+  return day;
+}
+
+function bindEditables(root){
+  root.querySelectorAll('[contenteditable][data-fid]').forEach(el=>{
+    el.addEventListener('blur',()=>setField(el.dataset.fid, el.textContent.trim()));
+  });
+  root.querySelectorAll('textarea[data-fid]').forEach(el=>{
+    el.addEventListener('input',()=>setField(el.dataset.fid, el.value));
+  });
+}
+
+function rebuildDayByUid(uid){
+  const info=DAYINDEX[uid]; const old=document.querySelector('.day[data-uid="'+uid+'"]');
+  if(info && old){ const neo=buildDay(info.city,info.ci,info.d); old.replaceWith(neo); }
+}
+
+function renderTimeline(){
+  const tl=document.getElementById('timeline'); tl.innerHTML="";
+  CITIES.forEach((city,ci)=>{
+    const sec=document.createElement('section'); sec.className='city'; sec.dataset.city=city.id;
+    sec.innerHTML=`
+      <div class="city-head">
+        <span class="emoji">${city.emoji}</span><h2>${city.name}</h2>
+        <span class="span">${city.span}</span><span class="nights">${city.nights}</span>
+      </div>
+      <div class="lodging"><span>🏠</span><span>${city.lodging}</span></div>`;
+    city.days.forEach(d=> sec.appendChild(buildDay(city,ci,d)) );
+    tl.appendChild(sec);
+  });
+}
+
+/* ---- PHOTOS (ajout/suppression + « gros », contrôles en mode édition) ---- */
+function renderPhotos(container, uid, editing){
+  const photos=getPhotos(uid); container.innerHTML="";
+  photos.forEach((p,idx)=>{
+    const ph=document.createElement('div'); ph.className='photo'+(p.big?' big':'');
+    ph.innerHTML=`<img src="${p.src}" alt="">`+(editing?`<button class="rm" title="Retirer">×</button><button class="big-toggle">${p.big?'réduire':'gros'}</button>`:'');
+    if(editing){
+      ph.querySelector('.rm').addEventListener('click',()=>{ const arr=getPhotos(uid); arr.splice(idx,1); setPhotos(uid,arr); renderPhotos(container,uid,true); });
+      ph.querySelector('.big-toggle').addEventListener('click',()=>{ const arr=getPhotos(uid); arr[idx]={...arr[idx],big:!arr[idx].big}; setPhotos(uid,arr); renderPhotos(container,uid,true); });
+    }
+    container.appendChild(ph);
+  });
+  if(editing){
+    const add=document.createElement('button'); add.className='addphoto'; add.innerHTML=`<span class="plus">+</span><span>photo</span>`;
+    const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true; input.style.display='none';
+    add.addEventListener('click',()=>input.click());
+    input.addEventListener('change',e=>handleFiles(e.target.files,uid,container));
+    add.addEventListener('dragover',e=>{e.preventDefault();add.classList.add('drag');});
+    add.addEventListener('dragleave',()=>add.classList.remove('drag'));
+    add.addEventListener('drop',e=>{e.preventDefault();add.classList.remove('drag');handleFiles(e.dataTransfer.files,uid,container);});
+    container.appendChild(add); container.appendChild(input);
+    container.style.display='';
+  } else {
+    container.style.display = photos.length?'':'none';
+  }
+}
+function handleFiles(files,uid,container){
+  [...files].filter(f=>f.type.startsWith('image/')).forEach(f=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        const max=600, scale=Math.min(1,max/Math.max(img.width,img.height));
+        const c=document.createElement('canvas'); c.width=img.width*scale; c.height=img.height*scale;
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        const data=c.toDataURL('image/jpeg',0.72);
+        const arr=getPhotos(uid); arr.push({src:data,big:false}); setPhotos(uid,arr); renderPhotos(container,uid,true);
+      };
+      img.src=ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+/* ---- FILTERS ---- */
+function setupFilters(){
+  document.querySelectorAll('.filter').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.filter').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active'); const c=btn.dataset.city;
+      document.querySelectorAll('.city').forEach(sec=>{ sec.style.display=(c==='all'||sec.dataset.city===c)?'':'none'; });
+    });
+  });
+}
+
+/* ---- PROGRESS ---- */
+function updateProgress(){
+  let total=0, done=0;
+  CITIES.forEach((city,ci)=>city.days.forEach(d=>{ total++; if(field("d"+ci+"_"+d.n+"_done",false)) done++; }));
+  document.getElementById('progressTxt').textContent=done+" / "+total+" jours";
+  document.getElementById('progressFill').style.width=(total?done/total*100:0)+"%";
+}
+
+/* ---- PRÉSENCE ---- */
+function renderPresence(users){
+  const wrap=document.getElementById('presence'); const txt=document.getElementById('presenceTxt'); const av=document.getElementById('avatars');
+  if(!online){ wrap.classList.remove('live'); txt.textContent='hors-ligne'; av.innerHTML=''; return; }
+  wrap.classList.add('live');
+  txt.textContent=(users.length||1)+(users.length>1?' en ligne':' en ligne');
+  av.innerHTML=users.slice(0,6).map(u=>`<span class="avatar" title="${esc(u)}">${esc((u[0]||'?').toUpperCase())}</span>`).join("");
+}
+
+/* ============ BOOT ============ */
+function boot(){
+  if(booted) return; booted=true;
+  renderPrep(); renderTimeline(); setupFilters(); updateProgress();
+}
+
+/* ---- LOGIN / CONNEXION ---- */
+const loginOverlay=document.getElementById('loginOverlay');
+const loginForm=document.getElementById('loginForm');
+const loginErr=document.getElementById('loginErr');
+const loginStatus=document.getElementById('loginStatus');
+const loginOffline=document.getElementById('loginOffline');
+
+function hideLogin(){ loginOverlay.classList.add('hidden'); }
+function startOffline(){
+  online=false;
+  try{ const raw=sessionStorage.getItem(KEY); if(raw) store=JSON.parse(raw); }catch(e){ store={}; }
+  document.getElementById('offlineBanner').classList.add('show');
+  renderPresence([]); hideLogin(); boot();
+}
+
+function connect(){
+  if(typeof io==='undefined'){
+    // pas de socket.io chargé -> serveur absent
+    loginStatus.textContent='Serveur introuvable.'; loginStatus.style.display='none';
+    loginOffline.style.display='block';
+    return;
+  }
+  socket=io({reconnection:true});
+  socket.on('connect',()=>{ loginStatus.textContent='Connecté au serveur ✓ — entre tes identifiants.'; loginOffline.style.display='none'; });
+  socket.on('connect_error',()=>{ loginStatus.textContent='Pas de serveur joignable.'; loginOffline.style.display='block'; });
+  socket.on('auth:ok',({state,you})=>{ store=state||{}; ME=you; online=true; renderPresence([you]); hideLogin(); boot(); });
+  socket.on('auth:fail',()=>{ loginErr.textContent='Mot de passe incorrect.'; });
+  socket.on('op',({fid,value})=>applyOp(fid,value));
+  socket.on('presence',users=>renderPresence(users));
+}
+
+loginForm.addEventListener('submit',e=>{
+  e.preventDefault(); loginErr.textContent='';
+  const name=document.getElementById('loginName').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  if(typeof io==='undefined' || !socket || !socket.connected){ loginErr.textContent='Serveur non connecté — utilise le mode hors-ligne ci-dessous.'; loginOffline.style.display='block'; return; }
+  socket.emit('auth',{name,password:pass});
+});
+document.getElementById('goOffline').addEventListener('click',startOffline);
+
+connect();
+</script>
+</body>
+</html>
