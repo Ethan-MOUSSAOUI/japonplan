@@ -322,6 +322,7 @@
   .pay-hotel-head{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 16px 10px;flex-wrap:wrap;gap:8px}
   .pay-hotel-title{font-size:18px;font-weight:700}
   .pay-hotel-dates{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .pay-hotel-note{font-family:"Helvetica Neue",Arial,sans-serif;font-size:11.5px;color:var(--ink-soft);margin-top:5px;max-width:440px;line-height:1.4}
   .pay-hotel-cost{text-align:right;font-family:"Helvetica Neue",Arial,sans-serif}
   .pay-hotel-cost .total{font-size:16px;font-weight:700}
   .pay-hotel-cost .pernight{font-size:11px;color:var(--ink-soft)}
@@ -1482,12 +1483,12 @@ const PAY_PEOPLE = ["Halime","Adel","Ethan","Wessim","Ryad"];
 const PAY_BANKER = "Halime";
 const PAY_HOTELS = [
   {id:"tokyo1", name:"Tokyo / Shinjuku", dates:"25 oct → 1er nov · 7 nuits", total:1412.7, perNight:35, booked:true},
+  {id:"voiture", name:"Voiture (location)", dates:"1er → 3 nov", total:712, perNight:null, note:"Prise en charge à Nishi-Shinjuku vers 12h · Restitution à Kyoto Station, sortie Hachijō (côté Shinkansen).", booked:true},
   {id:"fuji", name:"Mont Fuji", dates:"1er → 3 nov · 2 nuits", total:867, perNight:57.8, booked:true},
   {id:"kyoto", name:"Kyoto", dates:"3 → 6 nov · 3 nuits", total:900, perNight:45, booked:true},
   {id:"osaka", name:"Osaka", dates:"6 → 9 nov · 3 nuits", total:382, perNight:null, booked:true},
   {id:"hiroshima", name:"Hiroshima", dates:"9 → 11 nov · 2 nuits", total:null, perNight:null, booked:false},
-  {id:"tokyo2", name:"Tokyo (retour)", dates:"11 → 15 nov · 4 nuits", total:null, perNight:null, booked:false},
-  {id:"voiture", name:"Voiture de location", dates:"Tokyo → Fuji · récup 1er nov", total:null, perNight:null, booked:false}
+  {id:"tokyo2", name:"Tokyo (retour)", dates:"11 → 15 nov · 4 nuits", total:null, perNight:null, booked:false}
 ];
 function payFmt(n){ if(n==null) return "—"; return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+" €"; }
 function payPaid(hid,p){ return field('pay_'+hid+'_'+p, p===PAY_BANKER); }
@@ -1508,7 +1509,7 @@ function renderPayments(){
       const shares=PAY_PEOPLE.map(p=>{ const paid=payPaid(h.id,p); const banker=p===PAY_BANKER;
         return `<div class="pay-share${paid?' paid':''}${banker?' banker':''}" data-h="${h.id}" data-p="${esc(p)}"><div class="pay-stamp">${paid?'✓':''}</div><div class="pay-who"><div class="n">${esc(p)}</div><div class="a">${payFmt(share)}${banker?' · a payé la résa':''}</div></div></div>`;
       }).join("");
-      return `<div class="pay-hotel"><div class="pay-hotel-head"><div><div class="pay-hotel-title">${esc(h.name)}</div><div class="pay-hotel-dates">${esc(h.dates)}</div></div><div class="pay-hotel-cost"><div class="total">${payFmt(h.total)}</div><div class="pernight">${h.perNight?payFmt(h.perNight)+' / nuit':''}</div></div></div><div class="pay-shares">${shares}</div></div>`;
+      return `<div class="pay-hotel"><div class="pay-hotel-head"><div><div class="pay-hotel-title">${esc(h.name)}</div><div class="pay-hotel-dates">${esc(h.dates)}</div>${h.note?`<div class="pay-hotel-note">${esc(h.note)}</div>`:''}</div><div class="pay-hotel-cost"><div class="total">${payFmt(h.total)}</div><div class="pernight">${h.perNight?payFmt(h.perNight)+' / nuit':''}</div></div></div><div class="pay-shares">${shares}</div></div>`;
     }
     return `<div class="pay-hotel pending"><div class="pay-hotel-head"><div><div class="pay-hotel-title">${esc(h.name)}</div><div class="pay-hotel-dates">${esc(h.dates)}</div></div><span class="pay-badge">pas encore réservé</span></div><div class="pay-note">Montant à ajouter une fois la réservation faite.</div></div>`;
   }).join("");
