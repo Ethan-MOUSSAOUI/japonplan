@@ -302,6 +302,47 @@
   .day.flash{animation:flashcard 1.5s ease}
   @keyframes flashcard{0%,100%{box-shadow:var(--shadow)}18%{box-shadow:0 0 0 3px var(--gold),var(--shadow)}}
 
+  /* ---- ONGLET PAIEMENTS ---- */
+  .pay-overlay{position:fixed;inset:0;z-index:90;background:var(--washi);overflow-y:auto;display:none}
+  .pay-overlay.open{display:block}
+  .pay-wrap{max-width:900px;margin:0 auto;padding:22px 18px 70px}
+  .pay-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:22px;gap:12px;flex-wrap:wrap}
+  .pay-head h2{margin:0 0 4px;font-size:23px}
+  .pay-head p{margin:0;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;color:var(--ink-soft);max-width:560px}
+  .pay-close{flex:0 0 auto;background:var(--ink);color:var(--washi);border:none;border-radius:999px;padding:9px 16px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;cursor:pointer}
+  .pay-close:hover{background:var(--momiji)}
+  .pay-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px}
+  .pay-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;text-align:center;font-family:"Helvetica Neue",Arial,sans-serif}
+  .pay-card .pname{font-size:11px;color:var(--ink-soft);margin-bottom:6px}
+  .pay-card .pamt{font-size:18px;font-weight:700;color:var(--ink)}
+  .pay-card.settled .pamt{color:var(--moss)}
+  .pay-card .prole{font-size:10px;color:var(--ink-soft);margin-top:4px}
+  .pay-hotel{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:16px;overflow:hidden}
+  .pay-hotel.pending{background:transparent;border:1px dashed var(--line)}
+  .pay-hotel-head{display:flex;justify-content:space-between;align-items:flex-start;padding:14px 16px 10px;flex-wrap:wrap;gap:8px}
+  .pay-hotel-title{font-size:18px;font-weight:700}
+  .pay-hotel-dates{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);margin-top:2px}
+  .pay-hotel-cost{text-align:right;font-family:"Helvetica Neue",Arial,sans-serif}
+  .pay-hotel-cost .total{font-size:16px;font-weight:700}
+  .pay-hotel-cost .pernight{font-size:11px;color:var(--ink-soft)}
+  .pay-badge{display:inline-block;font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;padding:3px 9px;border-radius:999px;background:rgba(192,138,45,.14);color:var(--gold);border:1px solid var(--gold)}
+  .pay-shares{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:0 16px 16px}
+  .pay-share{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;background:var(--washi);cursor:pointer;user-select:none;transition:.15s}
+  .pay-share:hover{border-color:var(--moss)}
+  .pay-share.paid{background:rgba(93,107,74,.14);border-color:var(--moss)}
+  .pay-stamp{width:26px;height:26px;border-radius:50%;border:2px solid var(--momiji);flex:none;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:.15s}
+  .pay-share.paid .pay-stamp{background:var(--moss);border-color:var(--moss);color:#fff}
+  .pay-who{font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;line-height:1.25}
+  .pay-who .n{font-weight:700}
+  .pay-who .a{color:var(--ink-soft);font-size:11.5px}
+  .pay-share.banker{opacity:.72}
+  .pay-share.banker .pay-who .a{font-style:italic}
+  .pay-note{padding:0 16px 16px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12.5px;color:var(--ink-soft)}
+  .pay-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--ink-soft);margin-top:18px}
+  .pay-reset{background:none;border:1px solid var(--line);color:var(--ink-soft);padding:6px 12px;border-radius:999px;cursor:pointer;font-family:inherit;font-size:12px}
+  .pay-reset:hover{border-color:var(--momiji);color:var(--momiji)}
+  @media(max-width:560px){.pay-summary{grid-template-columns:repeat(2,1fr)}}
+
   /* prep */
   .prep{background:linear-gradient(180deg,rgba(192,138,45,.08),rgba(192,138,45,.02));border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;margin-bottom:30px}
   .prep h2{margin:0 0 4px;font-size:21px;display:flex;align-items:center;gap:10px}
@@ -393,6 +434,7 @@
     </div>
     <span class="sep"></span>
     <button class="hz-toggle active" id="horizonToggle" title="Afficher / masquer la vue chronologie">🧭 Chronologie</button>
+    <button class="hz-toggle" id="payToggle" title="Suivi des paiements des hôtels">💴 Paiements</button>
   </div>
 
   <div class="horizon" id="horizon"></div>
@@ -411,6 +453,24 @@
     Carnet collaboratif temps réel — connecte-toi, édite, tout le monde voit les changements en direct.<br>
     Chaque jour : explications sur chaque lieu · restos cliquables → Google Maps · planning trajet Shinjuku/Ueno · versions multiples.
   </footer>
+</div>
+
+<div class="pay-overlay" id="payOverlay">
+  <div class="pay-wrap">
+    <div class="pay-head">
+      <div>
+        <h2>💴 Suivi des paiements — hôtels</h2>
+        <p>Halime a réservé et avancé les frais. Chacun coche sa part une fois remboursée — synchronisé en direct entre tous.</p>
+      </div>
+      <button class="pay-close" id="payClose">← Retour au carnet</button>
+    </div>
+    <div class="pay-summary" id="paySummary"></div>
+    <div id="payHotels"></div>
+    <div class="pay-foot">
+      <span id="payProgress"></span>
+      <button class="pay-reset" id="payReset">Réinitialiser les coches</button>
+    </div>
+  </div>
 </div>
 
 <div class="save-pill" id="savePill">✓ sauvegardé</div>
@@ -641,47 +701,50 @@ const CITIES = [
     ]
   },
   {
-    id:"hiro", emoji:"🌊", name:"Hiroshima / Miyajima", span:"9 → 10 nov", nights:"1 nuit",
-    lodging:"<b>Logement :</b> près de la gare d'Hiroshima (1 nuit, départ Shinkansen — minimise les trajets valises).",
+    id:"hiro", emoji:"🌊", name:"Hiroshima / Miyajima", span:"9 → 11 nov", nights:"2 nuits",
+    lodging:"<b>Logement :</b> près de la gare d'Hiroshima (2 nuits, départ Shinkansen — minimise les trajets valises).",
     days:[
-      {j:"J17",n:"10",date:"Mar 10/11",level:"phare",title:"Miyajima + Peace Memorial → Tokyo",
-       anchor:{name:"Torii flottant de Miyajima",info:"Le grand torii sur l'eau, les daims, l'île sacrée. Ferry depuis Hiroshima.",wiki:"Itsukushima_Shrine",maps:"Itsukushima Shrine Miyajima floating torii"},
+      {j:"J17",n:"10",date:"Mar 10/11",level:"phare",title:"Miyajima — l'île au torii",
+       anchor:{name:"Torii flottant de Miyajima",info:"Le grand torii sur l'eau, les daims en liberté, l'île sacrée d'Itsukushima. Journée entière sans se presser — on dort encore à Hiroshima ce soir.",wiki:"Itsukushima_Shrine",maps:"Itsukushima Shrine Miyajima floating torii"},
        around:[
-         {t:"Peace Memorial Park + musée",info:"Parc du Mémorial de la Paix, Dôme de Genbaku et musée — lieu de mémoire de 1945 (le 9 au soir OU le 10 au matin)."},
-         {t:"Ferry Miyajima",info:"Traversée courte (~10 min) vers l'île d'Itsukushima."},
-         {t:"Puis Shinkansen ~4h vers Tokyo",info:"Long trajet Shinkansen Hiroshima → Tokyo (~4h)."}
+         {t:"Ferry pour Miyajima",info:"JR jusqu'à Miyajimaguchi puis ferry JR (~10 min) vers l'île."},
+         {t:"Sanctuaire d'Itsukushima + torii",info:"Le sanctuaire sur pilotis et le grand torii — superbe à marée haute comme basse."},
+         {t:"Daims & ruelles Omotesandō",info:"Cerfs apprivoisés, ruelles de street food, boutiques de l'île."},
+         {t:"Mont Misen (téléphérique) si le temps",info:"Panorama sur la mer intérieure de Seto depuis le sommet."}
        ],
-       warn:"Timing serré : caler les horaires ferry + Shinkansen. Miyajima le matin puis train.",
        eat:[
-         {name:"Okonomiyaki / repli ramen",info:"Okonomiyaki d'Hiroshima si option dispo, sinon ramen.",maps:"halal restaurant Hiroshima"}
+         {name:"Okonomiyaki style Hiroshima",info:"La crêpe salée en couches avec nouilles, spécialité locale. Vérifier sans porc / halal.",maps:"okonomiyaki Hiroshima"},
+         {name:"Momiji manjū (Miyajima)",info:"Petits gâteaux en forme de feuille d'érable, souvent grillés — le snack emblématique de l'île.",maps:"momiji manju Miyajima"}
+       ]},
+
+      {j:"J18",n:"11",date:"Mer 11/11",level:"phare",title:"Mémorial de la Paix → Shinkansen Tokyo",
+       anchor:{name:"Hiroshima Peace Memorial",info:"Le Parc du Mémorial de la Paix : le Dôme de Genbaku (A-Bomb Dome), le cénotaphe et le musée. Lieu de mémoire de 1945, à visiter le matin.",wiki:"Hiroshima_Peace_Memorial",maps:"Hiroshima Peace Memorial Park"},
+       around:[
+         {t:"Musée du Mémorial de la Paix",info:"Musée poignant sur le 6 août 1945 — compter 1h30 à 2h."},
+         {t:"Dôme de Genbaku (A-Bomb Dome)",info:"Le bâtiment en ruine classé UNESCO, symbole de la ville."},
+         {t:"Puis Shinkansen ~4h vers Tokyo",info:"Départ l'après-midi : Sanyō + Tōkaidō Shinkansen jusqu'à Tokyo (~4h), puis Ueno."}
+       ],
+       warn:"Récupérer les valises à l'hôtel avant le train. Viser un Shinkansen début/milieu d'après-midi pour arriver à Tokyo dans la soirée.",
+       eat:[
+         {name:"Bento de gare (ekiben)",info:"Le repas du Shinkansen, à acheter à la gare d'Hiroshima. Choisir un ekiben sans porc.",maps:"ekiben Hiroshima station"}
        ]}
     ]
   },
   {
-    id:"tokyo", emoji:"🛍️", name:"Retour Tokyo", span:"10 → 14 nov", nights:"4 nuits", retour:true,
-    lodging:"<b>Logement :</b> Ueno — MIMARU Okachimachi ou Inaricho (entre Ueno et Akihabara). Shopping cadeaux + gaming + détente. Haneda accessible.",
+    id:"tokyo", emoji:"🛍️", name:"Retour Tokyo", span:"11 → 15 nov", nights:"4 nuits", retour:true,
+    lodging:"<b>Logement :</b> Ueno — MIMARU Okachimachi ou Inaricho (entre Ueno et Akihabara). Arrivée le 11 au soir depuis Hiroshima. Shopping cadeaux + gaming + détente. Haneda accessible.",
     days:[
-      {j:"J18",n:"11",date:"Mer 11/11",level:"chill",title:"Shopping cadeaux + Akihabara",
-       anchor:{name:"Ameyoko (Ueno)",info:"Le marché de rue pour les souvenirs pas chers, juste à côté de l'appart. Base shopping cadeaux.",wiki:"Ameyoko",maps:"Ameyoko Market Ueno Tokyo"},
+      {j:"J19",n:"12",date:"Jeu 12/11",level:"chill",title:"Shopping cadeaux + quartiers préférés",
+       anchor:{name:"Ameyoko (Ueno)",info:"Le marché de rue pour les souvenirs pas chers, juste à côté de l'appart — base shopping cadeaux. Puis on refait les quartiers coups de cœur du début.",wiki:"Ameyoko",maps:"Ameyoko Market Ueno Tokyo"},
        around:[
          {t:"Akihabara une dernière fois",info:"Dernier tour gaming/otaku (figurines, jeux) à 2 stations d'Ueno."},
          {t:"Don Quijote pour les cadeaux faciles",info:"Magasin discount pour rafler snacks et gadgets à offrir."},
-         {t:"Se reposer, mode détente",info:"Rythme tranquille, on lève le pied après l'intensité du séjour."}
+         {t:"Odaiba ou Ikebukuro (au feeling)",info:"Odaiba (vue baie, statue Gundam) ou K-BOOKS Ikebukuro (goodies anime) selon l'envie."},
+         {t:"Hie Shrine (spot photo torii)",info:"Tunnel de torii rouges en escalier — joli spot photo, peu fréquenté."}
        ],
        eat:[
-         {name:"Gyumon ou Panga (re-test)",info:"Refaire un coup de cœur halal du début de séjour.",maps:"Gyumon Halal Ramen Asakusa"},
-         {name:"Tendon Itsuki (tempura)",info:"Bol de tempura sur riz, populaire — vérifier l'option.",maps:"Tendon Itsuki Tokyo"}
-       ]},
-
-      {j:"J19",n:"12",date:"Jeu 12/11",level:"chill",title:"Quartiers préférés",
-       anchor:{name:"Au feeling",info:"Refaire vos coups de cœur du début. Pas de programme imposé — la journée 'on se perd'.",wiki:"Shibuya"},
-       around:[
-         {t:"Odaiba (vue baie, chill)",info:"Île artificielle dans la baie : vue, grande roue, statue Gundam, ambiance détente."},
-         {t:"Hie Shrine (spot photo torii)",info:"Sanctuaire avec un tunnel de torii rouges en escalier — joli spot photo, peu fréquenté."},
-         {t:"K-BOOKS Ikebukuro (anime & goodies)",info:"Paradis des goodies anime/manga (surtout Otome Road à Ikebukuro)."}
-       ],
-       eat:[
-         {name:"Halal Sukiyaki Diyafa",info:"Sukiyaki (fondue de bœuf sucrée-salée) certifié halal — soirée plaisir.",maps:"Diyafa Halal Sukiyaki Tokyo"}
+         {name:"Halal Sukiyaki Diyafa",info:"Sukiyaki (fondue de bœuf sucrée-salée) certifié halal — soirée plaisir.",maps:"Diyafa Halal Sukiyaki Tokyo"},
+         {name:"Gyumon ou Panga (re-test)",info:"Refaire un coup de cœur halal du début de séjour.",maps:"Gyumon Halal Ramen Asakusa"}
        ]},
 
       {j:"J20",n:"13",date:"Ven 13/11",level:"chill",title:"Footsal + Kappabashi",
@@ -767,12 +830,14 @@ const TRANSIT = {
           shinjuku:"Depuis Namba : métro Midōsuji dir. Shin-Osaka (~10 min), puis Shinkansen Sanyō dir. Hakata jusqu'à Hiroshima (~1h30).",
           ueno:"Depuis Namba : Midōsuji → Shin-Osaka, puis Shinkansen → Hiroshima (~1h30)."},
 
-  "d4_10":{base:"Base = hôtel près de la gare d'Hiroshima.",
-           shinjuku:"Miyajima : JR Sanyō jusqu'à Miyajimaguchi puis ferry (~10 min). Peace Memorial : tram ligne 2 depuis la gare.",
-           ueno:"Miyajima : JR + ferry depuis Miyajimaguchi. Peace Memorial : tram depuis la gare d'Hiroshima."},
+  "d4_10":{base:"Base = hôtel près de la gare d'Hiroshima (on y dort ce soir).",
+           shinjuku:"Miyajima : JR Sanyō (ligne pour Iwakuni) jusqu'à Miyajimaguchi (~25 min), puis ferry JR (~10 min) vers l'île.",
+           ueno:"Miyajima : JR jusqu'à Miyajimaguchi puis ferry JR (~10 min). Compte ~45 min porte-à-porte depuis la gare d'Hiroshima."},
 
-  "d5_11":{shinjuku:"Depuis Shinjuku (si tu y es) : Yamanote dir. Ueno ~25 min. Sinon Ameyoko est à 3-5 min à pied de l'appart d'Ueno.",
-           ueno:"Sur place : Ameyoko est entre les gares d'Ueno et Okachimachi (3-5 min à pied). Akihabara : Yamanote 2 arrêts (~5 min)."},
+  "d4_11":{base:"Base = Hiroshima, puis Shinkansen vers Tokyo (Ueno) en après-midi.",
+           shinjuku:"Peace Memorial : tram ligne 2 depuis la gare d'Hiroshima (~15 min). Puis Shinkansen Sanyō+Tōkaidō jusqu'à Tokyo (~4h), puis Yamanote → Ueno.",
+           ueno:"Peace Memorial : tram ligne 2 depuis la gare (~15 min). Retour valises, puis Shinkansen → Tokyo (~4h) et Yamanote/Keihin-Tōhoku jusqu'à Ueno."},
+
   "d5_12":{shinjuku:"Depuis Shinjuku : Yamanote — Ikebukuro direct (~9 min), Odaiba via Shimbashi + Yurikamome (~40 min).",
            ueno:"Depuis Ueno : Odaiba = Yamanote jusqu'à Shimbashi puis Yurikamome (~40 min). Ikebukuro = Yamanote direct (~15 min)."},
   "d5_13":{shinjuku:"Depuis Shinjuku : JR/métro jusqu'à Tawaramachi (Ginza Line), Kappabashi à 5 min à pied (~35 min total).",
@@ -801,9 +866,9 @@ const DAY_VISUALS = {
   "J14":[{label:"Château d'Osaka",wiki:"Osaka_Castle",emoji:"🏯",sub:"parc & photos"},{label:"Dōtonbori",wiki:"Dōtonbori",emoji:"🌃",sub:"néons & street food"},{label:"Amerikamura",wiki:"Amerikamura",emoji:"👕",sub:"friperies"},{label:"Karaoké",wiki:"Karaoke_box",emoji:"🎤",sub:"soirée"}],
   "J15":[{label:"Tōdai-ji",wiki:"Tōdai-ji",emoji:"🏯",sub:"Grand Bouddha"},{label:"Daims de Nara",wiki:"Nara_Park",emoji:"🦌",sub:"en liberté"},{label:"Kasuga-taisha",wiki:"Kasuga-taisha",emoji:"🏮",sub:"lanternes"},{label:"Naramachi",wiki:"Naramachi",emoji:"🏘️",sub:"vieille ville"}],
   "J16":[{label:"Namba Osaka",wiki:"Namba",emoji:"🛍️",sub:"matin libre"},{label:"Shinkansen",wiki:"Shinkansen",emoji:"🚄",sub:"Osaka → Hiroshima"},{label:"Peace Memorial",wiki:"Hiroshima_Peace_Memorial_Park",emoji:"🕊️",sub:"selon l'heure"},{label:"Miyajima sunset",wiki:"Itsukushima_Shrine",emoji:"🌅",sub:"option coucher"}],
-  "J17":[{label:"Peace Memorial",wiki:"Hiroshima_Peace_Memorial",emoji:"🕊️",sub:"matin"},{label:"Torii flottant",wiki:"Itsukushima_Shrine",emoji:"⛩️",sub:"Miyajima"},{label:"Retour Tokyo",wiki:"Shinkansen",emoji:"🚄",sub:"~4h de train"}],
-  "J18":[{label:"Ameyoko",wiki:"Ameyoko",emoji:"🍡",sub:"souvenirs"},{label:"Akihabara",wiki:"Akihabara",emoji:"🎮",sub:"figurines & jeux"},{label:"Don Quijote",wiki:"Don_Quijote_(store)",emoji:"🛍️",sub:"cadeaux faciles"}],
-  "J19":[{label:"Shibuya",wiki:"Shibuya",emoji:"🌃",sub:"coups de cœur"},{label:"Odaiba",wiki:"Odaiba",emoji:"🌉",sub:"option chill"},{label:"Hie Shrine",wiki:"Hie_Shrine",emoji:"⛩️",sub:"spot photo"},{label:"Ikebukuro",wiki:"Ikebukuro",emoji:"📚",sub:"anime & goodies"}],
+  "J17":[{label:"Torii flottant",wiki:"Itsukushima_Shrine",emoji:"⛩️",sub:"Miyajima"},{label:"Daims de Miyajima",wiki:"Sika_deer",emoji:"🦌",sub:"en liberté"},{label:"Mont Misen",wiki:"Mount_Misen",emoji:"🚠",sub:"vue mer de Seto"}],
+  "J18":[{label:"Peace Memorial",wiki:"Hiroshima_Peace_Memorial",emoji:"🕊️",sub:"le matin"},{label:"Dôme de Genbaku",wiki:"Hiroshima_Peace_Memorial",emoji:"🏛️",sub:"UNESCO"},{label:"Shinkansen → Tokyo",wiki:"Shinkansen",emoji:"🚄",sub:"~4h de train"}],
+  "J19":[{label:"Ameyoko",wiki:"Ameyoko",emoji:"🍡",sub:"souvenirs"},{label:"Akihabara",wiki:"Akihabara",emoji:"🎮",sub:"figurines & jeux"},{label:"Don Quijote",wiki:"Don_Quijote_(store)",emoji:"🛍️",sub:"cadeaux faciles"},{label:"Odaiba",wiki:"Odaiba",emoji:"🌉",sub:"option chill"}],
   "J20":[{label:"Futsal",wiki:"Futsal",emoji:"⚽",sub:"deuxième session"},{label:"Kappabashi",wiki:"Kappabashi",emoji:"🔪",sub:"couteaux = cadeaux"},{label:"Tokyo de nuit",wiki:"Tokyo",emoji:"🏮",sub:"tranquille"}],
   "J21":[{label:"Derniers achats",wiki:"Ueno",emoji:"🛍️",sub:"check cadeaux"},{label:"Valises",wiki:"Baggage",emoji:"🧳",sub:"poids + organisation"},{label:"Tokyo skyline",wiki:"Tokyo",emoji:"🌃",sub:"dernier tour"}],
   "✈":[{label:"Haneda Airport",wiki:"Haneda_Airport",emoji:"✈️",sub:"vol 9h50"},{label:"Départ",wiki:"Boeing_777",emoji:"🌅",sub:"départ tôt"}],
@@ -893,6 +958,7 @@ function remoteRebuild(uid){
 }
 function applyOp(fid, val){
   store[fid]=val;
+  if(/^pay_/.test(fid)){ renderPayments(); return; }
   if(/_done$/.test(fid)){ remoteRebuild(fid.replace(/_done$/,'')); updateProgress(); return; }
   if(/_photos$/.test(fid)){ const uid=fid.replace(/_photos$/,''); const c=document.querySelector('[data-photos="'+uid+'"]'); if(c) renderPhotos(c,uid, editMode.has(uid)); return; }
   if(/_versions$/.test(fid)){ remoteRebuild(fid.replace(/_versions$/,'')); return; }
@@ -1411,10 +1477,62 @@ function renderPresence(users){
   av.innerHTML=users.slice(0,6).map(u=>`<span class="avatar" title="${esc(u)}">${esc((u[0]||'?').toUpperCase())}</span>`).join("");
 }
 
+/* ============ ONGLET PAIEMENTS (synchronisé via le store partagé) ============ */
+const PAY_PEOPLE = ["Halime","Adel","Ethan","Wessim","Ryad"];
+const PAY_BANKER = "Halime";
+const PAY_HOTELS = [
+  {id:"tokyo1", name:"Tokyo / Shinjuku", dates:"25 oct → 1er nov · 7 nuits", total:1412.7, perNight:35, booked:true},
+  {id:"fuji", name:"Mont Fuji", dates:"1er → 3 nov · 2 nuits", total:867, perNight:57.8, booked:true},
+  {id:"kyoto", name:"Kyoto", dates:"3 → 6 nov · 3 nuits", total:900, perNight:45, booked:true},
+  {id:"osaka", name:"Osaka", dates:"6 → 9 nov · 3 nuits", total:382, perNight:null, booked:true},
+  {id:"hiroshima", name:"Hiroshima", dates:"9 → 11 nov · 2 nuits", total:null, perNight:null, booked:false},
+  {id:"tokyo2", name:"Tokyo (retour)", dates:"11 → 15 nov · 4 nuits", total:null, perNight:null, booked:false},
+  {id:"voiture", name:"Voiture de location", dates:"Tokyo → Fuji · récup 1er nov", total:null, perNight:null, booked:false}
+];
+function payFmt(n){ if(n==null) return "—"; return n.toLocaleString('fr-FR',{minimumFractionDigits:2,maximumFractionDigits:2})+" €"; }
+function payPaid(hid,p){ return field('pay_'+hid+'_'+p, p===PAY_BANKER); }
+function renderPayments(){
+  const sum=document.getElementById('paySummary'); const hot=document.getElementById('payHotels'); const prog=document.getElementById('payProgress');
+  if(!sum||!hot) return;
+  let totalAll=0, totalPaid=0;
+  sum.innerHTML=PAY_PEOPLE.map(p=>{
+    let due=0,paid=0;
+    PAY_HOTELS.filter(h=>h.booked&&h.total!=null).forEach(h=>{ const s=h.total/5; due+=s; if(payPaid(h.id,p)) paid+=s; });
+    totalAll+=due; totalPaid+=paid;
+    const settled=paid>=due-0.01;
+    return `<div class="pay-card${settled?' settled':''}"><div class="pname">${esc(p)}${p===PAY_BANKER?' (a réservé)':''}</div><div class="pamt">${payFmt(due)}</div><div class="prole">${settled?'à jour':payFmt(due-paid)+' restant'}</div></div>`;
+  }).join("");
+  hot.innerHTML=PAY_HOTELS.map(h=>{
+    if(h.booked && h.total!=null){
+      const share=h.total/5;
+      const shares=PAY_PEOPLE.map(p=>{ const paid=payPaid(h.id,p); const banker=p===PAY_BANKER;
+        return `<div class="pay-share${paid?' paid':''}${banker?' banker':''}" data-h="${h.id}" data-p="${esc(p)}"><div class="pay-stamp">${paid?'✓':''}</div><div class="pay-who"><div class="n">${esc(p)}</div><div class="a">${payFmt(share)}${banker?' · a payé la résa':''}</div></div></div>`;
+      }).join("");
+      return `<div class="pay-hotel"><div class="pay-hotel-head"><div><div class="pay-hotel-title">${esc(h.name)}</div><div class="pay-hotel-dates">${esc(h.dates)}</div></div><div class="pay-hotel-cost"><div class="total">${payFmt(h.total)}</div><div class="pernight">${h.perNight?payFmt(h.perNight)+' / nuit':''}</div></div></div><div class="pay-shares">${shares}</div></div>`;
+    }
+    return `<div class="pay-hotel pending"><div class="pay-hotel-head"><div><div class="pay-hotel-title">${esc(h.name)}</div><div class="pay-hotel-dates">${esc(h.dates)}</div></div><span class="pay-badge">pas encore réservé</span></div><div class="pay-note">Montant à ajouter une fois la réservation faite.</div></div>`;
+  }).join("");
+  hot.querySelectorAll('.pay-share').forEach(el=>{
+    el.addEventListener('click',()=>{ const hid=el.dataset.h, p=el.dataset.p; setField('pay_'+hid+'_'+p, !payPaid(hid,p)); renderPayments(); });
+  });
+  if(prog) prog.textContent=`Total collecté : ${payFmt(totalPaid)} / ${payFmt(totalAll)} (hébergements réservés)`;
+}
+function setupPayments(){
+  const open=document.getElementById('payToggle'); const ov=document.getElementById('payOverlay');
+  const close=document.getElementById('payClose'); const reset=document.getElementById('payReset');
+  if(open) open.addEventListener('click',()=>{ renderPayments(); ov.classList.add('open'); });
+  if(close) close.addEventListener('click',()=>ov.classList.remove('open'));
+  if(reset) reset.addEventListener('click',()=>{
+    if(!confirm("Remettre toutes les cases à zéro (sauf la part de Halime, déjà réglée via la résa) ?")) return;
+    PAY_HOTELS.filter(h=>h.booked).forEach(h=>PAY_PEOPLE.forEach(p=>setField('pay_'+h.id+'_'+p, p===PAY_BANKER)));
+    renderPayments();
+  });
+}
+
 /* ============ BOOT ============ */
 function boot(){
   if(booted) return; booted=true;
-  renderPrep(); renderTimeline(); setupFilters(); setupHorizonToggle(); renderHorizon(); updateProgress();
+  renderPrep(); renderTimeline(); setupFilters(); setupHorizonToggle(); renderHorizon(); setupPayments(); updateProgress();
 }
 
 /* ---- LOGIN / CONNEXION ---- */
